@@ -1,6 +1,6 @@
 <!-- For the top spacing -->
 <div class="top-spacing" [style.height]="paddingTop" ></div>
-<div #sectionsCont cdkDropListGroup class="sections-container gap-{{ sectionsGap }}" [ngClass]="{'mobile': screenType === 'Phablet', 'preview-state': !editMode }"  
+<div #sectionsCont cdkDropListGroup class="sections-container gap-{{ sectionsGap }}" [ngClass]="{'preview-state': !editMode }"  
     cdkDropList (cdkDropListDropped)="onSectionDropped($event)" [ngStyle]="{'grid-auto-rows': getSectionsTemplateRows()}">
 
     <section *ngFor="let section of sections$ | async; let i=index;" 

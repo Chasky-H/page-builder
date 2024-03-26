@@ -10,10 +10,10 @@ import { IAvailableBlockData, SYSTEM_PARAMETERS } from 'shared';
 import { PagesService, IPageEditor, UiPageSizeType } from '../../services/pages.service';
 import { BaseDestroyerComponent } from '../base/base-destroyer.component';
 
-export interface ISpacingOption {
-    key?: UiPageSizeType; 
-    value: string;
-}
+// export interface ISpacingOption {
+//     key?: UiPageSizeType; 
+//     value: string;
+// }
 
 @Component({
     selector: 'page-builder-editor',
@@ -90,7 +90,7 @@ export class PageBuilderEditorComponent extends BaseDestroyerComponent implement
 
     availableBlocksData: IAvailableBlockData[] = [];
     availableBlocksForDrag: Array<IPepDraggableItem> = [];
-    sizesGroupButtons = Array<ISpacingOption>();
+    // sizesGroupButtons = Array<ISpacingOption>();
     
     availableBlocksContainerId = PagesService.AVAILABLE_BLOCKS_CONTAINER_ID;
     
@@ -155,12 +155,12 @@ export class PageBuilderEditorComponent extends BaseDestroyerComponent implement
 
     ngOnInit(): void {
 
-        this.sizesGroupButtons = [
-            { key: 'none', value: this.translate.instant('GROUP_SIZE.NONE') },
-            { key: 'sm', value: this.translate.instant('GROUP_SIZE.SM') },
-            { key: 'md', value: this.translate.instant('GROUP_SIZE.MD') },
-            { key: 'lg', value: this.translate.instant('GROUP_SIZE.LG') }
-        ];
+        // this.sizesGroupButtons = [
+        //     { key: 'none', value: this.translate.instant('GROUP_SIZE.NONE') },
+        //     { key: 'sm', value: this.translate.instant('GROUP_SIZE.SM') },
+        //     { key: 'md', value: this.translate.instant('GROUP_SIZE.MD') },
+        //     { key: 'lg', value: this.translate.instant('GROUP_SIZE.LG') }
+        // ];
         
         this.pagesService.availableBlocksDataLoadedSubject$.pipe(this.getDestroyer()).subscribe((availableBlocksData: IAvailableBlockData[]) => {
             // TODO: For now we don't check if the relation is available or not. 

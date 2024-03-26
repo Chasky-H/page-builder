@@ -50,7 +50,7 @@ export class PageBuilderInternalComponent extends BaseDestroyerComponent impleme
         return this._screenSize;
     }
 
-    protected isPageDataSet = false;
+    // protected isPageDataSet = false;
 
     @HostBinding('style.padding-inline')
     paddingInline = '1rem';
@@ -105,7 +105,7 @@ export class PageBuilderInternalComponent extends BaseDestroyerComponent impleme
 
     private setPageDataProperties(pageView: IPageView) {
         if (pageView) {
-            this.isPageDataSet = true;
+            // this.isPageDataSet = true;
 
             if (this.sectionsContainer?.nativeElement) {
                 let maxWidth = coerceNumberProperty(pageView.Layout.MaxWidth, 0);

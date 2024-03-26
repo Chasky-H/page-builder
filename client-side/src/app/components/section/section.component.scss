@@ -10,10 +10,6 @@
     max-height: inherit;
     min-height: variables.$draggable-item-height;
 
-    // &.mobile {
-    //     display: block;
-    // }
-     
     // This css is only for edit mode!!!
     &.editable-state {
         &.default-height {
@@ -134,10 +130,6 @@
             overflow: unset; // Make it visible for see the focus.
         }
 
-        // &.mobile {
-        //     display: block;
-        // }
-        
         @include mixins.gap-sizes();
         
         .section-column {
