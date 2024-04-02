@@ -1,5 +1,4 @@
-<!-- For the top spacing -->
-<div class="top-spacing" [style.height]="paddingTop" ></div>
+<!-- <div class="top-spacing" [style.height]="paddingTop" ></div>
 <div #sectionsCont cdkDropListGroup class="sections-container gap-{{ sectionsGap }}" [ngClass]="{'preview-state': !editMode }"  
     cdkDropList (cdkDropListDropped)="onSectionDropped($event)" [ngStyle]="{'grid-auto-rows': getSectionsTemplateRows()}">
 
@@ -20,6 +19,9 @@
 
     <pep-skeleton-loader rowsNumber="1" lastRowOffset="false" rowHeightType="max" ></pep-skeleton-loader>
 </div>
-<!-- For the bottom spacing -->
 <div class="bottom-spacing" [style.height]="paddingBottom" ></div>
-<pep-size-detector></pep-size-detector>
+<pep-size-detector></pep-size-detector> -->
+
+<pep-layout [showSkeleton]="showSkeleton" [layoutView]="layoutView" [blockTemplate]="blockTemplate" 
+    (layoutViewChange)="onLayoutViewChanged($event)" (screenTypeChange)="onScreenTypeChange($event)">
+</pep-layout>

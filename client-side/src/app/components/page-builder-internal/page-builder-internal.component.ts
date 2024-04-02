@@ -1,14 +1,12 @@
 import { ActivatedRoute } from '@angular/router';
 import { Component, ElementRef, HostBinding, Input, OnDestroy, OnInit, Renderer2, ViewChild } from "@angular/core";
-import { BehaviorSubject, Observable } from "rxjs";
-import { CdkDragDrop  } from '@angular/cdk/drag-drop';
-import { IBlockProgress, PagesService } from '../../services/pages.service';
-import { TranslateService } from '@ngx-translate/core';
+import { BehaviorSubject } from 'rxjs';
 import { PepLayoutService, PepScreenSizeType, PepUtilitiesService } from '@pepperi-addons/ngx-lib';
 import { DataViewScreenSize, Page, PageBlock, PageSection, PageSizeType } from '@pepperi-addons/papi-sdk';
 import { NavigationService } from 'src/app/services/navigation.service';
-import { coerceNumberProperty } from '@angular/cdk/coercion';
+import { PepLayoutBuilderService } from '@pepperi-addons/ngx-composite-lib/layout-builder';
 import { IPageView, PageBlockView } from 'shared';
+import { IBlockProgress, PagesService } from '../../services/pages.service';
 import { BaseDestroyerComponent } from '../base/base-destroyer.component';
 
 export interface IPageBuilderHostObject {
@@ -23,12 +21,6 @@ export interface IPageBuilderHostObject {
     styleUrls: ['./page-builder-internal.component.scss']
 })
 export class PageBuilderInternalComponent extends BaseDestroyerComponent implements OnInit, OnDestroy {
-    @ViewChild('skeletonCont', { static: true }) skeletonContainer: ElementRef;
-    @ViewChild('sectionsCont', { static: true }) sectionsContainer: ElementRef;
-
-    @Input() editMode: boolean = false;
-    @Input() sectionsColumnsDropList = [];
-    
     // For loading the page from the client apps.
     private _hostObject: IPageBuilderHostObject;
     @Input()
@@ -39,92 +31,36 @@ export class PageBuilderInternalComponent extends BaseDestroyerComponent impleme
         return this._hostObject;
     }
 
-    private _screenSize: PepScreenSizeType;
-    @Input()
-    set screenSize(value: PepScreenSizeType) {
-        this._screenSize = value;
-        this.screenType = this.pagesService.getScreenType(value);
-        this.pagesService.setScreenWidth(this.screenType);
-    }
-    get screenSize(): PepScreenSizeType {
-        return this._screenSize;
-    }
-
-    // protected isPageDataSet = false;
-
-    @HostBinding('style.padding-inline')
-    paddingInline = '1rem';
-
-    paddingTop = '1rem';
-    paddingBottom = '1rem';
-
-    sectionsGap: PageSizeType | 'none';
-    columnsGap: PageSizeType | 'none';
-
-    screenType: DataViewScreenSize;
-
-    private _sectionsSubject: BehaviorSubject<PageSection[]> = new BehaviorSubject<PageSection[]>([]);
-    get sections$(): Observable<PageSection[]> {
-        return this._sectionsSubject.asObservable();
-    }
-
     private _pageBlockViewsMap = new Map<string, PageBlockView>();
     get pageBlockViewsMap(): ReadonlyMap<string, PageBlockView> {
         return this._pageBlockViewsMap;
     }
 
     private _pageView: IPageView;
-    protected showSkeleton = false;
-    
+    protected showSkeleton = true;
+    private _sectionsSubject: BehaviorSubject<PageSection[]> = new BehaviorSubject<PageSection[]>([]);
+    // get sections$(): Observable<PageSection[]> {
+    //     return this._sectionsSubject.asObservable();
+    // }
+
+    screenType: DataViewScreenSize;
+
     constructor(
         private route: ActivatedRoute,
         private renderer: Renderer2,
         private navigationService: NavigationService,
         private utilitiesService: PepUtilitiesService,
         private layoutService: PepLayoutService,
+        private layoutBuilderService: PepLayoutBuilderService,
         private pagesService: PagesService
     ) {
         super();
     }
 
-    private convertPageSizeType(size: PageSizeType | 'none') {
-        let res;
-
-        if (size === 'lg') {
-            res = '2rem';
-        } else if (size === 'md') {
-            res = '1rem';
-        } else if (size === 'sm') {
-            res = '0.5rem';
-        } else {
-            res = '0';
-        }
-
-        return res;
-    }
-
-    private setPageDataProperties(pageView: IPageView) {
-        if (pageView) {
-            // this.isPageDataSet = true;
-
-            if (this.sectionsContainer?.nativeElement) {
-                let maxWidth = coerceNumberProperty(pageView.Layout.MaxWidth, 0);
-                const maxWidthToSet = maxWidth === 0 ? 'unset' : `${maxWidth}px`;
-                this.renderer.setStyle(this.sectionsContainer.nativeElement, 'max-width', maxWidthToSet);
-            }
-
-            this.sectionsGap = pageView.Layout.SectionsGap || 'md';
-            this.columnsGap = pageView.Layout.ColumnsGap || 'md';
-
-            this.paddingInline = this.convertPageSizeType(pageView.Layout.HorizontalSpacing || 'md');
-            this.paddingBottom = this.paddingTop = this.convertPageSizeType(pageView.Layout.VerticalSpacing || 'md');
-        }
-    }
-
     private isBlockShouldBeHidden(blockKey: string): boolean {
         let res = false;
 
-        if (!this.editMode) {
+        if (!this.layoutBuilderService.isEditMode) {
             let blockFound = false;
             const sections = this._sectionsSubject.getValue();
 
@@ -136,8 +72,8 @@ export class PageBuilderInternalComponent extends BaseDestroyerComponent impleme
                     
                     if (column.BlockContainer?.BlockKey === blockKey) {
                         // Check if the block should be hidden
-                        const sectionShouldBeHidden = this.pagesService.getIsHidden(section.Hide, this.screenType);
-                        const blockShouldBeHidden = this.pagesService.getIsHidden(column.BlockContainer.Hide, this.screenType);
+                        const sectionShouldBeHidden = this.layoutBuilderService.getIsHidden(section.Hide, this.screenType);
+                        const blockShouldBeHidden = this.layoutBuilderService.getIsHidden(column.BlockContainer.Hide, this.screenType);
     
                         res = (sectionShouldBeHidden || blockShouldBeHidden);
                         blockFound = true;
@@ -165,7 +101,7 @@ export class PageBuilderInternalComponent extends BaseDestroyerComponent impleme
             // const queryParams = this.hostObject?.pageParams || this.route?.snapshot?.queryParams;
             const urlParams = this.navigationService.getQueryParamsAsObject();
             const queryParams = this.hostObject?.pageParams || urlParams;
-            this.pagesService.loadPageBuilder(addonUUID, pageKey, this.editMode, queryParams);
+            this.pagesService.loadPageBuilder(addonUUID, pageKey, this.layoutBuilderService.isEditMode, queryParams);
 
             this.layoutService.onResize$.subscribe((size: PepScreenSizeType) => {
                 this.screenSize = size;
@@ -206,23 +142,7 @@ export class PageBuilderInternalComponent extends BaseDestroyerComponent impleme
                 this.setPageDataProperties(this._pageView);
             });
 
-            this.pagesService.showSkeletonChange$.pipe(this.getDestroyer()).subscribe((showSkeleton: boolean | undefined) => {
-                if (showSkeleton !== undefined) {
-                    this.showSkeleton = showSkeleton;
-    
-                    if (showSkeleton) {
-                        this.sectionsContainer?.nativeElement?.classList.add('out');
-                        this.sectionsContainer?.nativeElement?.classList.remove('in');
-                        this.skeletonContainer?.nativeElement?.classList.add('in');
-                        this.skeletonContainer?.nativeElement?.classList.remove('out');
-                    } else {
-                        this.sectionsContainer?.nativeElement?.classList.add('in');
-                        this.sectionsContainer?.nativeElement?.classList.remove('out');
-                        this.skeletonContainer?.nativeElement?.classList.add('out');
-                        this.skeletonContainer?.nativeElement?.classList.remove('in');
-                    }
-                }
-            });
+            
         } else {
             console.log(`pageKey in not valid: ${pageKey}`);
         }
@@ -233,31 +153,7 @@ export class PageBuilderInternalComponent extends BaseDestroyerComponent impleme
         this.navigationService.initRouterToRoot();
     }
 
-    onSectionDropped(event: CdkDragDrop<any[]>) {
-        this.pagesService.onSectionDropped(event);
-    }
-
-    getSectionsTemplateRows() {
-        let templateRows = '';
-        let fillHeightCount = 0;
-        this.sections$.pipe(this.getDestroyer()).subscribe((sections: PageSection[]) => {    
-               if(sections?.length){
-                    sections.forEach(sec => {
-                        if(sec.FillHeight === true){
-                            fillHeightCount++;
-                            templateRows += ' auto';
-                        }
-                        else {
-                            templateRows += ' min-content';
-                        }
-                    });
-                    
-                    //if all are fill height should return 1fr for all
-                    //if not should return auto for fill height and min content for none
-                    return templateRows;
-               } 
-        });
-
-        return templateRows;
+    onScreenTypeChange(screenType: DataViewScreenSize) {
+        this.screenType = screenType;
     }
 }
