@@ -1,7 +1,6 @@
 import { Component, Input, OnInit } from "@angular/core";
-import { PepAddonService } from "@pepperi-addons/ngx-lib";
+import { BaseDestroyerDirective, PepAddonService } from "@pepperi-addons/ngx-lib";
 import { PagesService } from '../../services/pages.service';
-import { BaseDestroyerComponent } from "../base/base-destroyer.component";
 
 @Component({
     selector: 'page-builder',
@@ -9,11 +8,11 @@ import { BaseDestroyerComponent } from "../base/base-destroyer.component";
     styleUrls: ['./page-builder.component.scss'],
     providers: [ PagesService ]
 })
-export class PageBuilderComponent extends BaseDestroyerComponent implements OnInit {
+export class PageBuilderComponent extends BaseDestroyerDirective implements OnInit {
     
     @Input() hostObject: any;
     
-    editMode: boolean = false;
+    // editMode: boolean = false;
 
     constructor(
         private pepAddonService: PepAddonService,

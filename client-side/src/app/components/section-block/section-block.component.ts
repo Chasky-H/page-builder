@@ -1,23 +1,17 @@
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
-import { CdkDragEnd, CdkDragEnter, CdkDragExit, CdkDragStart } from '@angular/cdk/drag-drop';
-import { IBlockProgress, IPageBlockHostObject, PagesService } from '../../services/pages.service';
-import { DataViewScreenSize, PageBlock, PageConfiguration, PageBlockContainer } from '@pepperi-addons/papi-sdk';
+import { IPageBlockHostObject, PagesService } from '../../services/pages.service';
+import { DataViewScreenSize } from '@pepperi-addons/papi-sdk';
 import { PepRemoteLoaderOptions } from '@pepperi-addons/ngx-lib/remote-loader';
+import { BaseDestroyerDirective } from '@pepperi-addons/ngx-lib';
 import { IPageState, PageBlockView } from 'shared';
-import { BaseDestroyerComponent } from '../base/base-destroyer.component';
+import { PepLayoutBuilderService } from "@pepperi-addons/ngx-composite-lib/layout-builder";
 
 @Component({
     selector: 'section-block',
     templateUrl: './section-block.component.html',
-    styleUrls: ['./section-block.component.scss', './section-block.component.theme.scss']
+    styleUrls: ['./section-block.component.scss']
 })
-export class SectionBlockComponent extends BaseDestroyerComponent implements OnInit {
-    
-    @Input() sectionKey: string;
-    @Input() sectionHeight: string;
-    @Input() isMainEditorState = false;
-    @Input() editable = false;
-    @Input() active = false;
+export class SectionBlockComponent extends BaseDestroyerDirective implements OnInit {
     
     private _pageBlockView: PageBlockView;
     @Input()
@@ -35,22 +29,11 @@ export class SectionBlockComponent extends BaseDestroyerComponent implements OnI
         return this._pageBlockView;
     }
 
-    private _blockContainer: PageBlockContainer;
-    @Input()
-    set blockContainer(value: PageBlockContainer) {
-        this._blockContainer = value;
-        this.setIfHideForCurrentScreenType();
-    }
-    get blockContainer(): PageBlockContainer {
-        return this._blockContainer;
-    }
-
     private _screenType: DataViewScreenSize;
     @Input()
     set screenType(value: DataViewScreenSize) {
         const isNotFirstTime = this._screenType?.length > 0;
         this._screenType = value;
-        this.setIfHideForCurrentScreenType();
 
         if (isNotFirstTime) {
             this.setConfigurationOnScreenSizeChanged();
@@ -59,26 +42,20 @@ export class SectionBlockComponent extends BaseDestroyerComponent implements OnI
     get screenType(): DataViewScreenSize {
         return this._screenType;
     }
-    
-    @Output() dragExited: EventEmitter<CdkDragExit> = new EventEmitter();
-    @Output() dragEntered: EventEmitter<CdkDragEnter> = new EventEmitter();
 
-    hideForCurrentScreenType = false;
-    
     private _hostObject: IPageBlockHostObject;
     get hostObject() {
         return this._hostObject;
     }
 
     private _state = {};
-    
     protected remoteLoaderOptions: PepRemoteLoaderOptions;
-    // protected showSkeleton = true;
 
     onBlockHostEventsCallback: (event: CustomEvent) => void;
 
     constructor(
-        private pagesService: PagesService
+        private pagesService: PagesService,
+        private layoutBuilderService: PepLayoutBuilderService
     ) {
         super();
 
@@ -140,11 +117,6 @@ export class SectionBlockComponent extends BaseDestroyerComponent implements OnI
         }
     }
 
-    private setIfHideForCurrentScreenType(): void {
-        this.hideForCurrentScreenType = this.blockContainer ? 
-            this.pagesService.getIsHidden(this.blockContainer.Hide, this.screenType) : false;
-    }
-    
     ngOnInit(): void {
         // When block change call to his callback if declared, Else override the host object.
         this.pagesService.pageBlockChange$.pipe(this.getDestroyer()).subscribe((pageBlockKey: string) => {
@@ -159,46 +131,20 @@ export class SectionBlockComponent extends BaseDestroyerComponent implements OnI
                 this._state = state.BlocksState[this.pageBlockView.Key];
             }
         });
-
-        // this.pagesService.showSkeletonChange$.pipe(this.getDestroyer()).subscribe((showSkeleton: boolean | undefined) => {
-        //     this.showSkeleton = showSkeleton;
-        // });
-    }
-
-    onEditBlockClick() {
-        this.pagesService.navigateToEditor('block', this.pageBlockView.Key);
-    }
-
-    onRemoveBlockClick() {
-        this.pagesService.removeBlockFromSection(this.pageBlockView.Key);
-    }
-
-    onHideBlockChange(hideIn: DataViewScreenSize[]) {
-        this.pagesService.hideBlock(this.sectionKey, this.pageBlockView.Key, hideIn);
-        this.setIfHideForCurrentScreenType();
     }
 
     onBlockHostEvents(event: any) {
-    
         // Implement blocks events.
         switch(event.action) {
-            // // *** Deprecated ***
-            // case 'set-parameter':
-            //     this.pagesService.setBlockParameter(this.pageBlock.Key, event);
-            //     break;
-            // // *** Deprecated ***
-            // case 'set-parameters':
-            //     this.pagesService.setBlockParameters(this.pageBlock.Key, event);
-            //     break;
             case 'state-change':
                 // In runtime (or preview mode).
-                if (!this.editable) {
+                if (!this.layoutBuilderService.editableState) {
                     this.pagesService.onBlockStateChange(this.pageBlockView.Key, event);
                 }
                 break;
             case 'button-click':
                 // In runtime (or preview mode).
-                if (!this.editable) {
+                if (!this.layoutBuilderService.editableState) {
                     this.pagesService.onBlockButtonClick(this.pageBlockView.Key, event);
                 }
                 break;
@@ -216,21 +162,5 @@ export class SectionBlockComponent extends BaseDestroyerComponent implements OnI
 
     onBlockLoad(event: any) {
         this.pagesService.updateBlockLoaded(this.pageBlockView.Key);
-    }
-
-    onDragStart(event: CdkDragStart) {
-        this.pagesService.onBlockDragStart(event);
-    }
-
-    onDragEnd(event: CdkDragEnd) {
-        this.pagesService.onBlockDragEnd(event);
-    }
-
-    onDragExited(event: CdkDragExit) {
-        this.dragExited.emit(event);
-    }
-
-    onDragEntered(event: CdkDragEnter) {
-        this.dragEntered.emit(event);
     }
 }

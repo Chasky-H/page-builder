@@ -1,13 +1,12 @@
 import { ActivatedRoute } from '@angular/router';
-import { Component, ElementRef, HostBinding, Input, OnDestroy, OnInit, Renderer2, ViewChild } from "@angular/core";
+import { Component, Input, OnDestroy, OnInit } from "@angular/core";
 import { BehaviorSubject } from 'rxjs';
-import { PepLayoutService, PepScreenSizeType, PepUtilitiesService } from '@pepperi-addons/ngx-lib';
-import { DataViewScreenSize, Page, PageBlock, PageSection, PageSizeType } from '@pepperi-addons/papi-sdk';
+import { BaseDestroyerDirective } from '@pepperi-addons/ngx-lib';
+import { DataViewScreenSize, PageSection } from '@pepperi-addons/papi-sdk';
 import { NavigationService } from 'src/app/services/navigation.service';
-import { PepLayoutBuilderService } from '@pepperi-addons/ngx-composite-lib/layout-builder';
+import { IPepLayout, IPepLayoutView, PepLayoutBuilderService } from '@pepperi-addons/ngx-composite-lib/layout-builder';
 import { IPageView, PageBlockView } from 'shared';
 import { IBlockProgress, PagesService } from '../../services/pages.service';
-import { BaseDestroyerComponent } from '../base/base-destroyer.component';
 
 export interface IPageBuilderHostObject {
     pageKey: string;
@@ -20,7 +19,7 @@ export interface IPageBuilderHostObject {
     templateUrl: './page-builder-internal.component.html',
     styleUrls: ['./page-builder-internal.component.scss']
 })
-export class PageBuilderInternalComponent extends BaseDestroyerComponent implements OnInit, OnDestroy {
+export class PageBuilderInternalComponent extends BaseDestroyerDirective implements OnInit, OnDestroy {
     // For loading the page from the client apps.
     private _hostObject: IPageBuilderHostObject;
     @Input()
@@ -36,21 +35,16 @@ export class PageBuilderInternalComponent extends BaseDestroyerComponent impleme
         return this._pageBlockViewsMap;
     }
 
-    private _pageView: IPageView;
+    // private _pageView: IPageView;
     protected showSkeleton = true;
     private _sectionsSubject: BehaviorSubject<PageSection[]> = new BehaviorSubject<PageSection[]>([]);
-    // get sections$(): Observable<PageSection[]> {
-    //     return this._sectionsSubject.asObservable();
-    // }
-
-    screenType: DataViewScreenSize;
+    
+    protected screenType: DataViewScreenSize;
+    protected layoutView: IPepLayoutView;
 
     constructor(
         private route: ActivatedRoute,
-        private renderer: Renderer2,
         private navigationService: NavigationService,
-        private utilitiesService: PepUtilitiesService,
-        private layoutService: PepLayoutService,
         private layoutBuilderService: PepLayoutBuilderService,
         private pagesService: PagesService
     ) {
@@ -60,7 +54,7 @@ export class PageBuilderInternalComponent extends BaseDestroyerComponent impleme
     private isBlockShouldBeHidden(blockKey: string): boolean {
         let res = false;
 
-        if (!this.layoutBuilderService.isEditMode) {
+        if (!this.layoutBuilderService.editMode) {
             let blockFound = false;
             const sections = this._sectionsSubject.getValue();
 
@@ -93,7 +87,7 @@ export class PageBuilderInternalComponent extends BaseDestroyerComponent impleme
     ngOnInit() {
         const addonUUID = this.navigationService.addonUUID;
         const pageKey = this.hostObject?.pageKey || this.route.snapshot.data['page_key'] || this.route?.snapshot?.params['page_key'] || '';
-        this.pagesService.isOffline =  this.hostObject?.offline || false;
+        // this.pagesService.isOffline = this.hostObject?.offline || false;
 
         console.log('pageKey - ' + pageKey);
         if (pageKey.length > 0) {
@@ -101,14 +95,15 @@ export class PageBuilderInternalComponent extends BaseDestroyerComponent impleme
             // const queryParams = this.hostObject?.pageParams || this.route?.snapshot?.queryParams;
             const urlParams = this.navigationService.getQueryParamsAsObject();
             const queryParams = this.hostObject?.pageParams || urlParams;
-            this.pagesService.loadPageBuilder(addonUUID, pageKey, this.layoutBuilderService.isEditMode, queryParams);
+            this.pagesService.loadPageBuilder(addonUUID, pageKey, queryParams);
 
-            this.layoutService.onResize$.subscribe((size: PepScreenSizeType) => {
-                this.screenSize = size;
-            });
+            this.pagesService.pageViewDataChange$.pipe(this.getDestroyer()).subscribe((page: IPageView) => {
+                this.layoutView = {
+                    Title: '',
+                    Layout: page.Layout as IPepLayout
+                };
 
-            this.pagesService.sectionsChange$.pipe(this.getDestroyer()).subscribe((sections: PageSection[]) => {
-                this._sectionsSubject.next(sections);
+                this._sectionsSubject.next(page.Layout?.Sections || []);
             });
 
             this.pagesService.pageBlockProgressMapChange$.pipe(this.getDestroyer()).subscribe((blocksProgress: ReadonlyMap<string, IBlockProgress>) => {
@@ -136,13 +131,6 @@ export class PageBuilderInternalComponent extends BaseDestroyerComponent impleme
 
                 this._pageBlockViewsMap = pageBlockViewsMap;
             });
-
-            this.pagesService.pageViewDataChange$.pipe(this.getDestroyer()).subscribe((pageView: IPageView) => {
-                this._pageView = pageView;
-                this.setPageDataProperties(this._pageView);
-            });
-
-            
         } else {
             console.log(`pageKey in not valid: ${pageKey}`);
         }
@@ -153,7 +141,12 @@ export class PageBuilderInternalComponent extends BaseDestroyerComponent impleme
         this.navigationService.initRouterToRoot();
     }
 
+    onLayoutViewChanged(event: IPepLayoutView) {
+        // console.log('onLayoutViewChanged', event);
+    }
+
     onScreenTypeChange(screenType: DataViewScreenSize) {
         this.screenType = screenType;
     }
+
 }

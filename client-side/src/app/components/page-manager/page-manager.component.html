@@ -1,4 +1,37 @@
-<div *ngIf="lockScreen" class="cdk-overlay-backdrop cdk-overlay-dark-backdrop cdk-overlay-backdrop-showing"></div>
+<!-- <pep-layout-builder 
+    [availableBlocksForDrag]="availableBlocksForDrag" [layoutEditorTitle]="layoutEditorTitle" 
+    [blocksLimitNumber]="blocksLimitNumber"
+    (backClick)="onBackClick()" (editorChange)="onEditorChanged($event)" 
+    (blockAdded)="onBlockAdded($event)" (blocksRemoved)="onBlocksRemoved($event)">
+
+    <ng-container layout-editor-top-content>
+        <page-builder-editor (pageNameChange)="onPageNameChange($event)"></page-builder-editor>
+    </ng-container>
+
+    <div block-editor-content>
+        <pep-remote-loader-element *ngIf="currentBlockEditor?.remoteModuleOptions"
+            [options]="currentBlockEditor?.remoteModuleOptions" 
+            [props]="{ hostObject: currentBlockEditor?.hostObject }"
+            [events]="{ hostEvents: onBlockEditorHostEventsCallback }">
+        </pep-remote-loader-element>
+    </div>
+    
+    <div header-end-content>
+        <div *ngIf="pageSizeLimitInPercentage > MIN_PERCENTAGE_TO_SHOW_LIMIT" class="size-limit-container pep-button sm disable pep-spacing-element">
+            <span class="title-xs">{{ 'MESSAGES.PAGE_SIZE_LIMIT_TITLE' | translate }}&nbsp;</span>
+            <span class="title-sm color-caution bold">{{ pageSizeString }}</span>
+        </div>
+        <pep-button key='Save' [value]="'ACTIONS.SAVE' | translate" sizeType="sm" classNames="pep-spacing-element" (buttonClick)="onSaveClick()" [disabled]="isOverPageSizeLimit"></pep-button>
+        <pep-button key='Publish' [value]="'ACTIONS.PUBLISH' | translate" sizeType="sm" classNames="pep-spacing-element" styleType="strong" (buttonClick)="onPublishClick();" [disabled]="isOverPageSizeLimit">
+        </pep-button>
+    </div>
+
+    <ng-container layout-content>
+        <page-builder-internal ></page-builder-internal>
+    </ng-container>
+</pep-layout-builder> -->
+<div>test</div>
+<!-- <div *ngIf="lockScreen" class="cdk-overlay-backdrop cdk-overlay-dark-backdrop cdk-overlay-backdrop-showing"></div>
 
 <pep-page-layout [showShadow]="!previewMode && currentEditor" >
     <div pep-side-area *ngIf="!previewMode && currentEditor" style="height: inherit;">
@@ -54,7 +87,6 @@
                             <span class="title-xs">{{ 'MESSAGES.PAGE_SIZE_LIMIT_TITLE' | translate }}&nbsp;</span>
                             <span class="title-sm color-caution bold">{{ pageSizeString }}</span>
                         </div>
-                        <!-- <pep-menu sizeType="sm" classNames="pep-spacing-element" [items]="menuItems" (menuItemClick)="onMenuItemClick($event)" [disabled]="isOverPageSizeLimit"></pep-menu> -->
                         <pep-button key='Preview' [value]="'ACTIONS.PREVIEW' | translate" sizeType="sm" classNames="pep-spacing-element" (buttonClick)="togglePreviewMode()" [disabled]="isOverPageSizeLimit"></pep-button>
                         <pep-button key='Save' [value]="'ACTIONS.SAVE' | translate" sizeType="sm" classNames="pep-spacing-element" (buttonClick)="onSaveClick()" [disabled]="isOverPageSizeLimit"></pep-button>
                         <pep-button key='Publish' [value]="'ACTIONS.PUBLISH' | translate" sizeType="sm" classNames="pep-spacing-element" styleType="strong" (buttonClick)="onPublishClick();" [disabled]="isOverPageSizeLimit">
@@ -66,10 +98,9 @@
                 </ng-template>
             </div>
             <div #pageBuilderWrapper class="page-builder-wrapper" [ngClass]="{'limit-min-width': selectedScreenType === 'Landscape' }">
-                <!-- [selectedScreenType]="selectedScreenType"  -->
                 <page-builder-internal [editMode]="!previewMode" [screenSize]="screenSize" [sectionsColumnsDropList]="sectionsColumnsDropList"></page-builder-internal>
                 <div *ngIf="!previewMode" class="backdrop" [ngClass]="{'show-backdrop': currentEditor?.type === 'section' || currentEditor?.type === 'block'}"></div>
             </div>
         </div>
     </ng-container>
-</pep-page-layout>
+</pep-page-layout> -->

@@ -1,9 +1,0 @@
-@use '@pepperi-addons/ngx-lib/src/core/style/abstracts/functions';
-
-.hide-in-menu {
-    .mat-menu-item {
-        &.title {
-            color: functions.get-pep-color(color-text, color-dimmed);
-        }
-    }
-}

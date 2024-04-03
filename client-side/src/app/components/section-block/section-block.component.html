@@ -1,31 +1,6 @@
-<div *ngIf="pageBlockView && (editable || !hideForCurrentScreenType)" 
-    class="section-block-container"
-    [ngClass]="{ 'editable-state': editable, 'block-hidden-state': hideForCurrentScreenType, 'active-block': active }"
-    cdkDrag [cdkDragData]="blockContainer" [cdkDragDisabled]="!editable || !isMainEditorState" 
-    (cdkDragStarted)="onDragStart($event)" (cdkDragEnded)="onDragEnd($event)"
-    (cdkDragExited)="onDragExited($event)" (cdkDragEntered)="onDragEntered($event)">
-   
-    <pep-draggable-item *ngIf="editable && isMainEditorState" cdkDragHandle style="cursor: grab;"
-        class="block-toolbar" [title]="pageBlockView.RelationData?.Name" >
-        <ng-container pep-actions>
-            <pep-button classNames="caution" sizeType="xs" iconName="system_bin" (buttonClick)="onRemoveBlockClick();"></pep-button>
-            <!-- <hide-in [hideIn]="blockContainer.Hide" (hideInChange)="onHideBlockChange($event)"></hide-in> -->
-            <pep-button sizeType="xs" iconName="system_edit" (buttonClick)="onEditBlockClick();"></pep-button>
-        </ng-container>
-    </pep-draggable-item>
-    <!-- [ngStyle]="{ 'overflow': editable ? 'hidden' : (sectionHeight === 'unset' ? 'unset' : 'auto') }" -->
-    <div class="remote-loader-wrapper" [ngStyle]="{ 'overflow': (sectionHeight === 'unset' ? 'unset' : 'auto') }">
-        <!-- <div *ngIf="showSkeleton" style="display: block; margin: 1rem;">
-            <pep-skeleton-loader rowsNumber="2" lastRowOffset="false"></pep-skeleton-loader>
-            <br/>
-            <pep-skeleton-loader rowsNumber="1" lastRowOffset="false" rowHeightType="xl" ></pep-skeleton-loader>
-        </div> -->
-        <!-- [ngStyle]="{ 'visibility': !showSkeleton ? 'visible' : 'hidden' }"  -->
-        <pep-remote-loader-element *ngIf="remoteLoaderOptions" class="remote-loader"
-            [options]="remoteLoaderOptions"
-            [props]="{ hostObject: hostObject }"
-            [events]="{ hostEvents: onBlockHostEventsCallback }"
-            (load)="onBlockLoad($event)">
-        </pep-remote-loader-element>
-    </div>
-</div>
+<pep-remote-loader-element *ngIf="remoteLoaderOptions"
+    [options]="remoteLoaderOptions"
+    [props]="{ hostObject: hostObject }"
+    [events]="{ hostEvents: onBlockHostEventsCallback }"
+    (load)="onBlockLoad($event)">
+</pep-remote-loader-element>

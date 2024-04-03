@@ -43,7 +43,6 @@ export const routes: Routes = [
         // When loading this module from route we need to add this here (because only this module is loading).
         NavigationService,
         UtilitiesService,
-        // PagesService
     ]
 })
 export class PageBuilderModule {

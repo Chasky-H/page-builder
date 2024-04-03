@@ -13,7 +13,7 @@ import { PepTextboxModule } from '@pepperi-addons/ngx-lib/textbox';
 import { PepTextareaModule, } from '@pepperi-addons/ngx-lib/textarea';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { PepCheckboxModule } from '@pepperi-addons/ngx-lib/checkbox';
-import { SectionEditorModule } from '../section-editor/section-editor.module';
+
 import { PepColorModule } from '@pepperi-addons/ngx-lib/color';
 import { PepImageModule } from '@pepperi-addons/ngx-lib/image';
 import { PepGroupButtonsSettingsModule } from '@pepperi-addons/ngx-composite-lib/group-buttons-settings';
@@ -49,8 +49,6 @@ import { PepFlowPickerButtonModule } from '@pepperi-addons/ngx-composite-lib/flo
         PepTextareaModule,
         PepManageParametersModule,
         PepFlowPickerButtonModule,
-        SectionEditorModule,
-        // ToolbarModule,
         // TranslateModule.forChild()
         // ({
         //     loader: {

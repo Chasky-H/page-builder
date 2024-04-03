@@ -1,75 +1,21 @@
-<mat-tab-group  #tabGroup class="page-builder-editor-tabs" animationDuration="0ms">
-    <mat-tab label="{{'PAGE_MANAGER.GENERAL' | translate}}">
-        <div class="page-builder-editor-tab">
-            <pep-textbox [value]="pageName" [label]="'PAGE_MANAGER.PAGE_NAME_TITLE' | translate" (valueChange)="onPageNameChange($event)"></pep-textbox>
-            <pep-textarea [value]="pageDescription" [label]="'PAGE_MANAGER.PAGE_DESCRIPTION_TITLE' | translate" rowSpan="2" (valueChange)="onPageDescriptionChange($event)"></pep-textarea>
-            
-            <div>
-                <label class="body-xs mat-form-title ellipsis">{{'PAGE_MANAGER.PARAMETERS_TITLE' | translate}}</label>
-                <pep-button class="script-button" [value]="('PAGE_MANAGER.MANAGE_PARAMETERS' | translate)" styleType="regular"
-                    (buttonClick)="openParametersPickerDialog();">
-                </pep-button>
-            </div>
-            <div>
-                <label class="body-xs mat-form-title ellipsis">{{'PAGE_MANAGER.ON_LOAD_FLOW_TITLE' | translate}}</label>
-                <pep-flow-picker-button [flowHostObject]="onLoadFlowHostObject" styleType="regular" (flowChange)="onLoadFlowChange($event)"></pep-flow-picker-button>
-            </div>
-            <div>
-                <label class="body-xs mat-form-title ellipsis">{{'PAGE_MANAGER.ON_CHANGE_FLOW_TITLE' | translate}}</label>
-                <pep-flow-picker-button [flowHostObject]="onChangeFlowHostObject" styleType="regular" (flowChange)="onChangeFlowChange($event)"></pep-flow-picker-button>
-            </div>
-            <div class="editor-separator"></div>
-            <div>
-                <label class="editor-title">{{'PAGE_MANAGER.SECTIONS_TITLE' | translate}}</label>
-                <pep-button class="add-section-button" value="{{'PAGE_MANAGER.ADD_SECTION' | translate}}" styleType="regular" iconName="number_plus" iconPosition="end"
-                    (buttonClick)="onAddSectionClick($event)"></pep-button>
-            </div>
-            <div class="editor-separator"></div>
-            <pep-draggable-items class="available-blocks" [containerId]="availableBlocksContainerId" [items]="availableBlocksForDrag" [title]="'PAGE_MANAGER.BLOCKS_TITLE' | translate"
-                titleSizeType="xl" titleType="with-bottom-border" [showSearch]="true" [dropAreaIds]="sectionsColumnsDropList" (itemDragStarted)="onDragStart($event)" (itemDragEnded)="onDragEnd($event)">
-            </pep-draggable-items>
-        </div>
-    </mat-tab>
-    <mat-tab label="{{'PAGE_MANAGER.DESIGN' | translate}}">
-        <div class="page-builder-editor-tab">
-            <div>
-                <pep-checkbox class="checkbox-as-title" [value]="isFullWidth" [label]="'PAGE_MANAGER.FULL_WIDTH_TITLE' | translate" [renderTitle]="false" (valueChange)="isFullWidthChange($event)"></pep-checkbox>
-                <pep-textbox [label]="'PAGE_MANAGER.MAX_WIDTH_TITLE' | translate" type="int" [disabled]="isFullWidth" [value]="maxWidth" (valueChange)="onMaxWidthChange($event)"></pep-textbox>
-            </div>
-            <div class="editor-separator"></div>
-            <!-- Spacing -->
-            <pep-group-buttons-settings [groupType]="'sizes'" 
-                                        [header]="'PAGE_MANAGER.SPACING_TITLE' | translate" [subHeader]="'PAGE_MANAGER.SPACING_HORIZONTAL_TITLE' | translate"
-                                        [btnKey]="horizontalSpacing.toLowerCase()" [excludeKeys]="['xs','xl','2xl']" [useNone]="true"
-                                        (btnkeyChange)="setColumnsHorizntalGap($event)">
-            </pep-group-buttons-settings>
-            <pep-group-buttons-settings [groupType]="'sizes'" 
-                                        [subHeader]="'PAGE_MANAGER.SPACING_VERTICAL_TITLE' | translate"
-                                        [btnKey]="verticalSpacing.toLowerCase()" [excludeKeys]="['xs','xl','2xl']" [useNone]="true"
-                                        (btnkeyChange)="setColumnsVerticalGap($event)">
-            </pep-group-buttons-settings>
-            <div class="editor-separator"></div>
-            <!-- Gaps -->
-            <pep-group-buttons-settings [groupType]="'sizes'" 
-                                        [header]="'PAGE_MANAGER.GAPS_TITLE' | translate" [subHeader]="'PAGE_MANAGER.SECTIONS_GAP_TITLE' | translate"
-                                        [btnKey]="sectionsGap?.toLowerCase()" [excludeKeys]="['xs','xl','2xl']" [useNone]="true"
-                                        (btnkeyChange)="setSectionGap($event)">
-            </pep-group-buttons-settings>
-            <pep-group-buttons-settings [groupType]="'sizes'" 
-                                        [subHeader]="'PAGE_MANAGER.COLUMNS_GAP_TITLE' | translate"
-                                        [btnKey]="columnsGap.toLowerCase()" [excludeKeys]="['xs','xl','2xl']" [useNone]="true"
-                                        (btnkeyChange)="setColumnsGap($event)">
-            </pep-group-buttons-settings>
-            <!-- Rounded Corners -->
-            <!--
-            <div class="editor-separator"></div>
-            <label class="editor-title">{{'PAGE_MANAGER.ROUNDED_CORNERS_TITLE' | translate}}</label><br>
-            <label class="body-xs ellipsis">{{'PAGE_MANAGER.BORDER_RADIUS_TITLE' | translate}}</label>
-            <pep-group-buttons [buttons]="sizesGroupButtons" [selectedButtonKey]="roundedCorners" buttonsClass="ms regular" viewType="toggle"
-                (buttonClick)="setRoundedCorners($event)"></pep-group-buttons> -->
-        </div>
-    </mat-tab>
-</mat-tab-group>
+
+<pep-textbox [value]="pageName" [label]="'PAGE_MANAGER.PAGE_NAME_TITLE' | translate" (valueChange)="onPageNameChange($event)"></pep-textbox>
+<pep-textarea [value]="pageDescription" [label]="'PAGE_MANAGER.PAGE_DESCRIPTION_TITLE' | translate" rowSpan="2" (valueChange)="onPageDescriptionChange($event)"></pep-textarea>
+
+<div>
+    <label class="body-xs mat-form-title ellipsis">{{'PAGE_MANAGER.PARAMETERS_TITLE' | translate}}</label>
+    <pep-button class="script-button" [value]="('PAGE_MANAGER.MANAGE_PARAMETERS' | translate)" styleType="regular"
+        (buttonClick)="openParametersPickerDialog();">
+    </pep-button>
+</div>
+<div>
+    <label class="body-xs mat-form-title ellipsis">{{'PAGE_MANAGER.ON_LOAD_FLOW_TITLE' | translate}}</label>
+    <pep-flow-picker-button [flowHostObject]="onLoadFlowHostObject" styleType="regular" (flowChange)="onLoadFlowChange($event)"></pep-flow-picker-button>
+</div>
+<div>
+    <label class="body-xs mat-form-title ellipsis">{{'PAGE_MANAGER.ON_CHANGE_FLOW_TITLE' | translate}}</label>
+    <pep-flow-picker-button [flowHostObject]="onChangeFlowHostObject" styleType="regular" (flowChange)="onChangeFlowChange($event)"></pep-flow-picker-button>
+</div>
 
 <ng-template #parametersDialogTemplate let-data>
     <pep-dialog [showClose]="true" [title]="'PAGE_MANAGER.MANAGE_PARAMETERS' | translate" [showFooter]="false" (close)="closeParametersDialog($event)">

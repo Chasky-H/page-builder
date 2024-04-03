@@ -1,3 +1,21 @@
+
+<pep-layout [showSkeleton]="showSkeleton" [layoutView]="layoutView" [blockTemplate]="blockTemplate" 
+    (layoutViewChange)="onLayoutViewChanged($event)" (screenTypeChange)="onScreenTypeChange($event)">
+</pep-layout>
+
+<ng-template #blockTemplate let-blockKey="blockKey" let-draggableItemKey="draggableItemKey">
+    <section-block *ngIf="pageBlockViewsMap.has(blockKey)" 
+        [screenType]="screenType" [pageBlockView]="pageBlockViewsMap.get(blockKey)">
+    </section-block>
+        
+    <!-- <pep-remote-loader-element *ngIf="remoteLoaderOptions" class="remote-loader"
+        [options]="remoteLoaderOptions"
+        [props]="{ hostObject: hostObject }"
+        [events]="{ hostEvents: onBlockHostEventsCallback }"
+        (load)="onBlockLoad($event)">
+    </pep-remote-loader-element> -->
+</ng-template>
+
 <!-- <div class="top-spacing" [style.height]="paddingTop" ></div>
 <div #sectionsCont cdkDropListGroup class="sections-container gap-{{ sectionsGap }}" [ngClass]="{'preview-state': !editMode }"  
     cdkDropList (cdkDropListDropped)="onSectionDropped($event)" [ngStyle]="{'grid-auto-rows': getSectionsTemplateRows()}">
@@ -21,7 +39,3 @@
 </div>
 <div class="bottom-spacing" [style.height]="paddingBottom" ></div>
 <pep-size-detector></pep-size-detector> -->
-
-<pep-layout [showSkeleton]="showSkeleton" [layoutView]="layoutView" [blockTemplate]="blockTemplate" 
-    (layoutViewChange)="onLayoutViewChanged($event)" (screenTypeChange)="onScreenTypeChange($event)">
-</pep-layout>
