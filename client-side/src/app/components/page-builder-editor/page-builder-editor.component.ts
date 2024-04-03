@@ -99,16 +99,18 @@ export class PageBuilderEditorComponent extends BaseDestroyerDirective implement
     }
 
     private setEditorData(pageData: Page) {
-        this.pageName = pageData.pageName;
-        this.pageDescription = pageData.pageDescription;
-        this.parameters = pageData.parameters || [];
-        this.onLoadFlow = pageData.onLoadFlow || {};
-        this.onChangeFlow = pageData.onChangeFlow || {};
+        if (pageData) {
+            this.pageName = pageData.Name;
+            this.pageDescription = pageData.Description;
+            this.parameters = pageData.Parameters || [];
+            this.onLoadFlow = pageData.OnLoadFlow || {};
+            this.onChangeFlow = pageData.OnChangeFlow || {};
+        }
     }
 
     ngOnInit(): void {
         this.setEditorData(this.pagesService.pageDataForEditor);
-
+        
         // Update the editor with the page data
         this.pagesService.pageDataForEditorChange$.pipe(this.getDestroyer()).subscribe((pageData: Page) => {
             this.setEditorData(pageData);

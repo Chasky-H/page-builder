@@ -54,7 +54,7 @@ const routes: Routes = [
     {
         path: '',
         component: PageManagerComponent,
-        // data: { showSidebar: false, addPadding: false}
+        data: { showSidebar: false, addPadding: false}
     }
 ];
 

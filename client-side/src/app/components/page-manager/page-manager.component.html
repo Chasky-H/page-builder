@@ -1,11 +1,11 @@
-<!-- <pep-layout-builder 
+<pep-layout-builder 
     [availableBlocksForDrag]="availableBlocksForDrag" [layoutEditorTitle]="layoutEditorTitle" 
     [blocksLimitNumber]="blocksLimitNumber"
     (backClick)="onBackClick()" (editorChange)="onEditorChanged($event)" 
     (blockAdded)="onBlockAdded($event)" (blocksRemoved)="onBlocksRemoved($event)">
 
     <ng-container layout-editor-top-content>
-        <page-builder-editor (pageNameChange)="onPageNameChange($event)"></page-builder-editor>
+        <page-builder-editor class="layout-builder-editor-group" (pageNameChange)="onPageNameChange($event)"></page-builder-editor>
     </ng-container>
 
     <div block-editor-content>
@@ -16,21 +16,21 @@
         </pep-remote-loader-element>
     </div>
     
-    <div header-end-content>
-        <div *ngIf="pageSizeLimitInPercentage > MIN_PERCENTAGE_TO_SHOW_LIMIT" class="size-limit-container pep-button sm disable pep-spacing-element">
+    <ng-container header-end-content>
+        <div *ngIf="pageSizeLimitInPercentage > MIN_PERCENTAGE_TO_SHOW_LIMIT" class="size-limit-container pep-button sm disable">
             <span class="title-xs">{{ 'MESSAGES.PAGE_SIZE_LIMIT_TITLE' | translate }}&nbsp;</span>
             <span class="title-sm color-caution bold">{{ pageSizeString }}</span>
         </div>
-        <pep-button key='Save' [value]="'ACTIONS.SAVE' | translate" sizeType="sm" classNames="pep-spacing-element" (buttonClick)="onSaveClick()" [disabled]="isOverPageSizeLimit"></pep-button>
-        <pep-button key='Publish' [value]="'ACTIONS.PUBLISH' | translate" sizeType="sm" classNames="pep-spacing-element" styleType="strong" (buttonClick)="onPublishClick();" [disabled]="isOverPageSizeLimit">
+        <pep-button key='Save' [value]="'ACTIONS.SAVE' | translate" sizeType="sm" (buttonClick)="onSaveClick()" [disabled]="isOverPageSizeLimit"></pep-button>
+        <pep-button key='Publish' [value]="'ACTIONS.PUBLISH' | translate" sizeType="sm" styleType="strong" (buttonClick)="onPublishClick();" [disabled]="isOverPageSizeLimit">
         </pep-button>
-    </div>
+    </ng-container>
 
     <ng-container layout-content>
-        <page-builder-internal ></page-builder-internal>
+        <page-builder-internal></page-builder-internal>
     </ng-container>
-</pep-layout-builder> -->
-<div>test</div>
+</pep-layout-builder>
+
 <!-- <div *ngIf="lockScreen" class="cdk-overlay-backdrop cdk-overlay-dark-backdrop cdk-overlay-backdrop-showing"></div>
 
 <pep-page-layout [showShadow]="!previewMode && currentEditor" >

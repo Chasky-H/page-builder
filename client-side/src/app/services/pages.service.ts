@@ -15,7 +15,7 @@ import { PepSnackBarData, PepSnackBarService } from "@pepperi-addons/ngx-lib/sna
 import { IPageState } from 'shared';
 import { QueryParamsService } from "./query-params.service";
 import { IParamemeter } from "@pepperi-addons/ngx-composite-lib/manage-parameters";
-import { PepLayoutBuilderService, IPepLayoutBlockAddedEvent } from "@pepperi-addons/ngx-composite-lib/layout-builder";
+import { PepLayoutBuilderService, IPepLayoutBlockAddedEvent, IPepLayoutView } from "@pepperi-addons/ngx-composite-lib/layout-builder";
 
 import * as _ from 'lodash';
 
@@ -463,6 +463,19 @@ export class PagesService {
             this.notifyPageViewChange(pageView);
         }
     }
+    
+    notifyLayoutViewChanged(layoutView: IPepLayoutView) {
+        if (this.layoutBuilderService.editMode) {
+            const page = this._pageInEditorSubject.getValue();
+            page.Layout = layoutView.Layout;
+            this.notifyPageInEditorChange(page, false);
+        }
+
+        const pageView = this._pageViewSubject.getValue();
+        pageView.Layout = layoutView.Layout;
+
+        this.notifyPageViewChange(pageView);
+    }
 
     // TODO:
     private notifyPageViewChange(pageView: IPageView) {
@@ -877,16 +890,16 @@ export class PagesService {
     }
 
     updatePageFromEditor(pageData: IPageEditor) {
-        const currentPage = this._pageInEditorSubject.getValue();
+        const page = this._pageInEditorSubject.getValue();
 
-        if (currentPage) {
-            currentPage.Name = pageData.pageName;
-            currentPage.Description = pageData.pageDescription;
-            currentPage.Parameters = pageData.parameters;
-            currentPage.OnLoadFlow = pageData.onLoadFlow;
-            currentPage.OnChangeFlow = pageData.onChangeFlow;
+        if (page) {
+            page.Name = pageData.pageName;
+            page.Description = pageData.pageDescription;
+            page.Parameters = pageData.parameters;
+            page.OnLoadFlow = pageData.onLoadFlow;
+            page.OnChangeFlow = pageData.onChangeFlow;
             
-            this.notifyPageInEditorChange(currentPage);
+            this.notifyPageInEditorChange(page);
         }
     }
 
@@ -895,7 +908,7 @@ export class PagesService {
         const availableBlockData: IAvailableBlockData = blockAddedEvent.DraggableItem.data.availableBlockData;
 
         let block: PageBlock = {
-            Key: PepGuid.newGuid(),
+            Key: blockAddedEvent.BlockKey,
             // Relation: relation, // The whole relation is saved on the block but for calculate it later we use only the relation.Name & relation.AddonUUID
             Configuration: {
                 Resource: availableBlockData.RelationName, // relation.Name,
@@ -1039,25 +1052,33 @@ export class PagesService {
     /**************************************************************************************/
     
     onBlockStateChange(blockKey: string, event: { changes: any }): void {
-        // Create the changes object.
-        const changes = { BlocksState: {} };
-        changes.BlocksState[blockKey] = event.changes;
-        
-        this.raiseClientEventForBlock(CLIENT_ACTION_ON_CLIENT_PAGE_STATE_CHANGE, blockKey, { Changes: changes });
+        if (blockKey) {
+            // Create the changes object.
+            const changes = { BlocksState: {} };
+            changes.BlocksState[blockKey] = event.changes;
+            
+            this.raiseClientEventForBlock(CLIENT_ACTION_ON_CLIENT_PAGE_STATE_CHANGE, blockKey, { Changes: changes });
+        }
     }
 
     onBlockButtonClick(blockKey: string, event: { buttonKey: string }): void {
-        this.raiseClientEventForBlock(CLIENT_ACTION_ON_CLIENT_PAGE_BUTTON_CLICK, blockKey, { ButtonKey: event.buttonKey });
+        if (blockKey) {
+            this.raiseClientEventForBlock(CLIENT_ACTION_ON_CLIENT_PAGE_BUTTON_CLICK, blockKey, { ButtonKey: event.buttonKey });
+        }
     }
     
     onRegisterStateChange(blockKey: string, event: { callback: (data: {state: any, configuration: any}) => void }): void {
         const bpToUpdate = this._pageBlockProgressMap.get(blockKey);
-        bpToUpdate.registerStateChangeCallback = event.callback;
+        if (bpToUpdate) {
+            bpToUpdate.registerStateChangeCallback = event.callback;
+        }
     }
 
     onRegisterScreenSizeChange(blockKey: string, event: { callback: (data: {state: any, configuration: any, screenType: DataViewScreenSize}) => void }): void {
         const bpToUpdate = this._pageBlockProgressMap.get(blockKey);
-        bpToUpdate.registerScreenSizeChangeCallback = event.callback;
+        if (bpToUpdate) {
+            bpToUpdate.registerScreenSizeChangeCallback = event.callback;
+        }
     }
 
     emitEvent(event: any) {
