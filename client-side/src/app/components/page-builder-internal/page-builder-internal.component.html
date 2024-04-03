@@ -4,12 +4,10 @@
 </pep-layout>
 
 <ng-template #blockTemplate let-blockKey="blockKey" let-draggableItemKey="draggableItemKey">
-    test
-    <section-block 
-        [screenType]="screenType" [blockKey]="blockKey" >
+    <section-block *ngIf="pageBlockViewsMap.has(blockKey)" 
+        [screenType]="screenType" [pageBlockView]="pageBlockViewsMap.get(blockKey)">
     </section-block>
-    <!-- [pageBlockView]="getBlockView(blockKey)" -->
-    
+        
     <!-- <pep-remote-loader-element *ngIf="remoteLoaderOptions" class="remote-loader"
         [options]="remoteLoaderOptions"
         [props]="{ hostObject: hostObject }"

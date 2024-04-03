@@ -37,7 +37,7 @@ export class PageBuilderInternalComponent extends BaseDestroyerDirective impleme
 
     // private _pageView: IPageView;
     protected showSkeleton = true;
-    // private _sectionsSubject: BehaviorSubject<PageSection[]> = new BehaviorSubject<PageSection[]>([]);
+    private _sectionsSubject: BehaviorSubject<PageSection[]> = new BehaviorSubject<PageSection[]>([]);
     
     protected screenType: DataViewScreenSize;
     protected layoutView: IPepLayoutView;
@@ -51,38 +51,38 @@ export class PageBuilderInternalComponent extends BaseDestroyerDirective impleme
         super();
     }
 
-    // private isBlockShouldBeHidden(blockKey: string): boolean {
-    //     let res = false;
+    private isBlockShouldBeHidden(blockKey: string): boolean {
+        let res = false;
 
-    //     if (!this.layoutBuilderService.editMode) {
-    //         let blockFound = false;
-    //         const sections = this._sectionsSubject.getValue();
+        if (!this.layoutBuilderService.editMode) {
+            let blockFound = false;
+            const sections = this._sectionsSubject.getValue();
 
-    //         for (let sectionIndex = 0; sectionIndex < sections.length; sectionIndex++) {
-    //             const section = sections[sectionIndex];
+            for (let sectionIndex = 0; sectionIndex < sections.length; sectionIndex++) {
+                const section = sections[sectionIndex];
                 
-    //             for (let columnIndex = 0; columnIndex < section.Columns.length; columnIndex++) {
-    //                 const column = section.Columns[columnIndex];
+                for (let columnIndex = 0; columnIndex < section.Columns.length; columnIndex++) {
+                    const column = section.Columns[columnIndex];
                     
-    //                 if (column.BlockContainer?.BlockKey === blockKey) {
-    //                     // Check if the block should be hidden
-    //                     const sectionShouldBeHidden = this.layoutBuilderService.getIsHidden(section.Hide, this.screenType);
-    //                     const blockShouldBeHidden = this.layoutBuilderService.getIsHidden(column.BlockContainer.Hide, this.screenType);
+                    if (column.BlockContainer?.BlockKey === blockKey) {
+                        // Check if the block should be hidden
+                        const sectionShouldBeHidden = this.layoutBuilderService.getIsHidden(section.Hide, this.screenType);
+                        const blockShouldBeHidden = this.layoutBuilderService.getIsHidden(column.BlockContainer.Hide, this.screenType);
     
-    //                     res = (sectionShouldBeHidden || blockShouldBeHidden);
-    //                     blockFound = true;
-    //                     break;
-    //                 }
-    //             }
+                        res = (sectionShouldBeHidden || blockShouldBeHidden);
+                        blockFound = true;
+                        break;
+                    }
+                }
     
-    //             if (blockFound) {
-    //                 break;
-    //             }
-    //         }
-    //     }
+                if (blockFound) {
+                    break;
+                }
+            }
+        }
 
-    //     return res;
-    // }
+        return res;
+    }
 
     ngOnInit() {
         const addonUUID = this.navigationService.addonUUID;
@@ -105,36 +105,35 @@ export class PageBuilderInternalComponent extends BaseDestroyerDirective impleme
                         Layout: JSON.parse(JSON.stringify(page.Layout)) as IPepLayout
                     };
 
-                    // this._sectionsSubject.next(page.Layout?.Sections || []);
+                    this._sectionsSubject.next(page.Layout?.Sections || []);
                 }
             });
 
-            // this.pagesService.pageBlockProgressMapChange$.pipe(this.getDestroyer()).subscribe((blocksProgress: ReadonlyMap<string, IBlockProgress>) => {
-            //     debugger;
-            //     // Clear the blocks map and set it again.
-            //     const pageBlockViewsMap = new Map<string, PageBlockView>();
-            //     // const remoteEntriesMap = new Map<string, boolean>();
-            //     const pbRelationsNames = new Map<string, boolean>();
+            this.pagesService.pageBlockProgressMapChange$.pipe(this.getDestroyer()).subscribe((blocksProgress: ReadonlyMap<string, IBlockProgress>) => {
+                // Clear the blocks map and set it again.
+                const pageBlockViewsMap = new Map<string, PageBlockView>();
+                // const remoteEntriesMap = new Map<string, boolean>();
+                const pbRelationsNames = new Map<string, boolean>();
 
-            //     blocksProgress.forEach(bp => {
-            //         // Only if the block should not be hidden
-            //         if (!this.isBlockShouldBeHidden(bp.block.Key)) {
-            //             // Check that there is no other block with the same relation name that need to load 
-            //             // (cause the module deferation throw error when we try to load two blocks from the same relation).
-            //             if (bp.loaded || !pbRelationsNames.has(bp.block.RelationData.Name)) {
+                blocksProgress.forEach(bp => {
+                    // Only if the block should not be hidden
+                    if (!this.isBlockShouldBeHidden(bp.block.Key)) {
+                        // Check that there is no other block with the same relation name that need to load 
+                        // (cause the module deferation throw error when we try to load two blocks from the same relation).
+                        if (bp.loaded || !pbRelationsNames.has(bp.block.RelationData.Name)) {
                             
-            //                 // Add to the map only relations that not added yet.
-            //                 if (!bp.loaded) {
-            //                     pbRelationsNames.set(bp.block.RelationData.Name, true);
-            //                 }
+                            // Add to the map only relations that not added yet.
+                            if (!bp.loaded) {
+                                pbRelationsNames.set(bp.block.RelationData.Name, true);
+                            }
 
-            //                 pageBlockViewsMap.set(bp.block.Key, bp.block);
-            //             }
-            //         }
-            //     });
+                            pageBlockViewsMap.set(bp.block.Key, bp.block);
+                        }
+                    }
+                });
 
-            //     this._pageBlockViewsMap = pageBlockViewsMap;
-            // });
+                this._pageBlockViewsMap = pageBlockViewsMap;
+            });
         } else {
             console.log(`pageKey in not valid: ${pageKey}`);
         }
@@ -144,10 +143,6 @@ export class PageBuilderInternalComponent extends BaseDestroyerDirective impleme
         this.pagesService.unloadPageBuilder();
         this.navigationService.initRouterToRoot();
     }
-
-    // getBlockView(blockKey: string): PageBlockView {
-    //     return this.pageBlockViewsMap.get(blockKey);
-    // }
 
     onLayoutViewChanged(event: IPepLayoutView) {
         // console.log('onLayoutViewChanged', event);
