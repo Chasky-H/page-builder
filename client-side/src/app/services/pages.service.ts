@@ -205,9 +205,9 @@ export class PagesService {
 
     // This subject is for page view change.
     private _pageViewSubject: BehaviorSubject<IPageView> = new BehaviorSubject<IPageView>(null);
-    get pageViewLoad$(): Observable<IPageView> {
-        return this._pageViewSubject.asObservable().pipe(distinctUntilChanged((prevPage, nextPage) => prevPage?.Key === nextPage?.Key));
-    }
+    // get pageViewLoad$(): Observable<IPageView> {
+    //     return this._pageViewSubject.asObservable().pipe(distinctUntilChanged((prevPage, nextPage) => prevPage?.Key === nextPage?.Key));
+    // }
     get pageViewDataChange$(): Observable<IPageView> {
         return this._pageViewSubject.asObservable().pipe(filter(page => !!page));
     }
@@ -265,9 +265,9 @@ export class PagesService {
         private navigationService: NavigationService,
         private queryParamsService: QueryParamsService
     ) {
-        this.pageViewLoad$.subscribe((pageView: IPageView) => {
-            this.loadBlocks(pageView);
-        });
+        // this.pageViewLoad$.subscribe((pageView: IPageView) => {
+        //     this.loadBlocks(pageView);
+        // });
 
         this.availableBlocksDataLoadedSubject$.subscribe(availableBlocksData => {
             // Load the blocks remote loader options.
@@ -366,7 +366,6 @@ export class PagesService {
     private handlePageBlockViewChangeResult(res: IPageClientEventResult, addedBlockKey: string = '') {
         // Set the state.
         this.notifyStateChange(res.State);
-
         const pageView = this._pageViewSubject.getValue();
         
         // Merge the page view blocks.
@@ -464,6 +463,9 @@ export class PagesService {
                     
                     // Load the page view for the first time.
                     this.notifyPageViewChange(res.PageView);
+
+                    // Load the blocks.
+                    this.loadBlocks(res.PageView);
                 } else {
                     // TODO: Show error?
                 }
