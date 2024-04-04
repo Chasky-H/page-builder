@@ -7,7 +7,7 @@ import { PagesService, IBlockEditor } from '../../services/pages.service';
 import { NavigationService } from '../../services/navigation.service';
 import { UtilitiesService } from 'src/app/services/utilities.service';
 import { PepDialogActionButton, PepDialogData, PepDialogService } from "@pepperi-addons/ngx-lib/dialog";
-import { IEditor, IPepLayoutBlockAddedEvent } from "@pepperi-addons/ngx-composite-lib/layout-builder";
+import { IEditor, IPepLayoutBlockAddedEvent, PepLayoutBuilderService } from "@pepperi-addons/ngx-composite-lib/layout-builder";
 import { IAvailableBlockData } from "shared";
 import { IPepDraggableItem } from "@pepperi-addons/ngx-lib/draggable-items";
 
@@ -42,7 +42,8 @@ export class PageManagerComponent extends BaseDestroyerDirective implements OnIn
         private pepAddonService: PepAddonService,
         private pagesService: PagesService,
         private utilitiesService: UtilitiesService,
-        public navigationService: NavigationService,
+        protected layoutBuilderService: PepLayoutBuilderService,
+        protected navigationService: NavigationService,
     ) {
         super();
         this.pepAddonService.setShellRouterData({ showSidebar: false, addPadding: false});
@@ -153,6 +154,7 @@ export class PageManagerComponent extends BaseDestroyerDirective implements OnIn
     }
 
     onEditorChanged(editor: IEditor) {
+        this.currentBlockEditor = null;
         debugger;
         // Raise event to let the user set the block editor in the UI.
         if (editor.type === 'block') {

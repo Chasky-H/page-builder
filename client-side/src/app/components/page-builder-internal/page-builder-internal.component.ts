@@ -99,10 +99,10 @@ export class PageBuilderInternalComponent extends BaseDestroyerDirective impleme
 
             this.pagesService.pageViewDataChange$.pipe(this.getDestroyer()).subscribe((page: IPageView) => {
                 if (JSON.stringify(this.layoutView?.Layout) !== JSON.stringify(page.Layout)) {
-                    debugger;
+                    // debugger;
                     this.layoutView = {
                         // Title: '',
-                        Layout: JSON.parse(JSON.stringify(page.Layout)) as IPepLayout
+                        Layout: page.Layout as IPepLayout
                     };
 
                     this._sectionsSubject.next(page.Layout?.Sections || []);

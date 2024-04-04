@@ -9,7 +9,7 @@
     </ng-container>
 
     <div block-editor-content>
-        <pep-remote-loader-element *ngIf="currentBlockEditor?.remoteModuleOptions"
+        <pep-remote-loader-element *ngIf="layoutBuilderService.editableState && currentBlockEditor?.remoteModuleOptions"
             [options]="currentBlockEditor?.remoteModuleOptions" 
             [props]="{ hostObject: currentBlockEditor?.hostObject }"
             [events]="{ hostEvents: onBlockEditorHostEventsCallback }">
