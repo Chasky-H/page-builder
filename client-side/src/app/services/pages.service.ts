@@ -113,9 +113,9 @@ export class PagesService {
     
     // This subject is for page view change.
     private _pageViewSubject: BehaviorSubject<IPageView> = new BehaviorSubject<IPageView>(null);
-    get pageViewLoad$(): Observable<IPageView> {
-        return this._pageViewSubject.asObservable().pipe(distinctUntilChanged((prevPage, nextPage) => prevPage?.Key === nextPage?.Key));
-    }
+    // get pageViewLoad$(): Observable<IPageView> {
+    //     return this._pageViewSubject.asObservable().pipe(distinctUntilChanged((prevPage, nextPage) => prevPage?.Key === nextPage?.Key));
+    // }
     get pageViewDataChange$(): Observable<IPageView> {
         return this._pageViewSubject.asObservable().pipe(filter(page => !!page));
     }
@@ -145,9 +145,9 @@ export class PagesService {
         // super(translate, dialogService);
 
         // TODO: load the blocks
-        this.pageViewLoad$.subscribe((pageView: IPageView) => {
-            this.loadBlocks(pageView);
-        });
+        // this.pageViewLoad$.subscribe((pageView: IPageView) => {
+        //     this.loadBlocks(pageView);
+        // });
 
         this.availableBlocksDataLoadedSubject$.subscribe(availableBlocksData => {
             // Load the blocks remote loader options.
@@ -344,6 +344,9 @@ export class PagesService {
                     
                     // Load the page view for the first time.
                     this.notifyPageViewChange(res.PageView);
+
+                    // Load the blocks.
+                    this.loadBlocks(res.PageView);
                 } else {
                     // TODO: Show error?
                 }
