@@ -4,7 +4,7 @@
 	"description": "",
 	"main": "index.js",
 	"scripts": {
-		"test": "echo \"Error: no test specified\" && exit 1",
+		"test": "npm run init && cd ./server-side && npm run test-noReport",
 		"build": "cd ./shared && npm run build && cd .. && cd ./client-side && npm run build && cd .. && cd ./server-side && npm run build && cd .. && cd ./cpi-side && npm run build && cd ..",
 		"init": "cd ./shared && npm i && cd .. && cd ./client-side && npm i --force && cd .. && cd ./server-side && npm i && cd .. && cd ./cpi-side && npm i",
 		"pub-addon": "publish-addon",

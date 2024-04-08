@@ -1,5 +1,6 @@
 import { DataViewScreenSizes, Page, PageBlock, PageLayout, PageSection, PageSectionColumn, PageSizeTypes, SplitTypes, ResourceDataConfiguration, ScreenSizeDataConfiguration, PageConfiguration, PageConfigurationParameter } from "@pepperi-addons/papi-sdk";
 import { DEFAULT_BLOCKS_NUMBER_LIMITATION, DEFAULT_PAGE_SIZE_LIMITATION, IBlockLoaderData, PAGES_NUBER_LIMITATION } from 'shared'
+import { TextEncoder } from "util";
 
 export class PagesValidatorService {
 
