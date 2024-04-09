@@ -99,9 +99,7 @@ export class PageBuilderInternalComponent extends BaseDestroyerDirective impleme
 
             this.pagesService.pageViewDataChange$.pipe(this.getDestroyer()).subscribe((page: IPageView) => {
                 if (JSON.stringify(this.layoutView?.Layout) !== JSON.stringify(page.Layout)) {
-                    // debugger;
                     this.layoutView = {
-                        // Title: '',
                         Layout: page.Layout as IPepLayout
                     };
 
@@ -152,5 +150,4 @@ export class PageBuilderInternalComponent extends BaseDestroyerDirective impleme
     onScreenTypeChange(screenType: DataViewScreenSize) {
         this.screenType = screenType;
     }
-
 }

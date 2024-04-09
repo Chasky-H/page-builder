@@ -103,15 +103,4 @@ export class UtilitiesService {
         return this.dialogService.openDefaultDialog(data);
     }
 
-    getCssScreenWidh(screenType: DataViewScreenSize): string {
-        let widthToSet = '100%';
-
-        if (screenType === 'Tablet') {
-            widthToSet = '720';
-        } else if (screenType === 'Phablet') {
-            widthToSet = '360';
-        }
-
-        return widthToSet;
-    }
 }

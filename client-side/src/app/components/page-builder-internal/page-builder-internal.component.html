@@ -7,35 +7,4 @@
     <section-block *ngIf="pageBlockViewsMap.has(blockKey)" 
         [screenType]="screenType" [pageBlockView]="pageBlockViewsMap.get(blockKey)">
     </section-block>
-        
-    <!-- <pep-remote-loader-element *ngIf="remoteLoaderOptions" class="remote-loader"
-        [options]="remoteLoaderOptions"
-        [props]="{ hostObject: hostObject }"
-        [events]="{ hostEvents: onBlockHostEventsCallback }"
-        (load)="onBlockLoad($event)">
-    </pep-remote-loader-element> -->
 </ng-template>
-
-<!-- <div class="top-spacing" [style.height]="paddingTop" ></div>
-<div #sectionsCont cdkDropListGroup class="sections-container gap-{{ sectionsGap }}" [ngClass]="{'preview-state': !editMode }"  
-    cdkDropList (cdkDropListDropped)="onSectionDropped($event)" [ngStyle]="{'grid-auto-rows': getSectionsTemplateRows()}">
-
-    <section *ngFor="let section of sections$ | async; let i=index;" 
-        [ngClass]="screenType === 'Phablet' ? 'margin-'+sectionsGap : ''"
-        class="draggable-section " [sectionsColumnsDropList]="sectionsColumnsDropList" [pageBlockViewsMap]="pageBlockViewsMap"
-        [key]="section.Key" [name]="section.Name || ('PAGE_MANAGER.SECTION' | translate) + ' ' + (i+1)" [split]="section.Split" [height]="section.Height"
-        [columns]="section.Columns" [collapseOnTablet]="section.CollapseOnTablet" [hideIn]="section.Hide" [columnsGap]="columnsGap" [screenSize]="screenSize" [editable]="editMode">
-    </section>
-</div>
-<div #skeletonCont class="skeleton-page-container ">
-    <pep-skeleton-loader rowsNumber="1" lastRowOffset="false" rowHeightType="xl" ></pep-skeleton-loader>
-    <div class="split-skeleton-container">
-        <pep-skeleton-loader rowsNumber="1" lastRowOffset="false" rowHeightType="max" ></pep-skeleton-loader>
-        <pep-skeleton-loader rowsNumber="1" lastRowOffset="false" rowHeightType="max" ></pep-skeleton-loader>
-    </div>
-    <pep-skeleton-loader rowsNumber="1" lastRowOffset="false" rowHeightType="xl" ></pep-skeleton-loader>
-
-    <pep-skeleton-loader rowsNumber="1" lastRowOffset="false" rowHeightType="max" ></pep-skeleton-loader>
-</div>
-<div class="bottom-spacing" [style.height]="paddingBottom" ></div>
-<pep-size-detector></pep-size-detector> -->

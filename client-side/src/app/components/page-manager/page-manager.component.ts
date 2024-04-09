@@ -7,7 +7,7 @@ import { PagesService, IBlockEditor } from '../../services/pages.service';
 import { NavigationService } from '../../services/navigation.service';
 import { UtilitiesService } from 'src/app/services/utilities.service';
 import { PepDialogActionButton, PepDialogData, PepDialogService } from "@pepperi-addons/ngx-lib/dialog";
-import { IEditor, IPepLayoutBlockAddedEvent, PepLayoutBuilderService } from "@pepperi-addons/ngx-composite-lib/layout-builder";
+import { IEditor, IPepLayoutBlockAddedEvent, IPepLayoutBlockConfig, PepLayoutBuilderService } from "@pepperi-addons/ngx-composite-lib/layout-builder";
 import { IAvailableBlockData } from "shared";
 import { IPepDraggableItem } from "@pepperi-addons/ngx-lib/draggable-items";
 
@@ -32,10 +32,12 @@ export class PageManagerComponent extends BaseDestroyerDirective implements OnIn
     
     protected onBlockEditorHostEventsCallback: (event: CustomEvent) => void;
 
-    get blocksLimitNumber(): number {
-        return this.pagesService.BLOCKS_NUMBER_LIMITATION_OBJECT.value;
+    protected blocksLayoutConfig: IPepLayoutBlockConfig = {
+        navigateToEditorAfterBlockAdded: true,
+        blocksLimitNumber: this.pagesService.BLOCKS_NUMBER_LIMITATION_OBJECT.value,
+        getBlockTitle: this.getBlockTitle.bind(this),
     }
-
+    
     constructor(
         private translate: TranslateService,
         private dialogService: PepDialogService,
@@ -52,14 +54,14 @@ export class PageManagerComponent extends BaseDestroyerDirective implements OnIn
         }
     }
 
+    private getBlockTitle(blockKey: string): string {
+        return this.pagesService.getBlockTitle(blockKey);
+    }
+
     private setCurrentBlockEditor(blockKey: string): void {
         this.currentBlockEditor = this.pagesService.getBlockEditor(blockKey);
     }
     
-    get pageSizeString(): string {
-        return `${this.pageSizeLimitInPercentage.toFixed(1)}%`;
-    }
-
     private subscribeEvents() {
         // When block change update the editor cause it can be changed.
         this.pagesService.pageBlockChange$.pipe(this.getDestroyer()).subscribe((pageBlockKey: string) => {
@@ -94,6 +96,17 @@ export class PageManagerComponent extends BaseDestroyerDirective implements OnIn
                 }
             });
         });
+
+        this.pagesService.blocksNumberLimitationChange$.pipe(this.getDestroyer()).subscribe((blocksNumberLimitation: number) => {
+            this.blocksLayoutConfig = {
+                ...this.blocksLayoutConfig, 
+                blocksLimitNumber: blocksNumberLimitation
+            };
+        });
+    }
+
+    get pageSizeString(): string {
+        return `${this.pageSizeLimitInPercentage.toFixed(1)}%`;
     }
 
     ngOnInit() {
@@ -155,7 +168,7 @@ export class PageManagerComponent extends BaseDestroyerDirective implements OnIn
 
     onEditorChanged(editor: IEditor) {
         this.currentBlockEditor = null;
-        debugger;
+
         // Raise event to let the user set the block editor in the UI.
         if (editor.type === 'block') {
             this.setCurrentBlockEditor(editor.id);
@@ -163,7 +176,6 @@ export class PageManagerComponent extends BaseDestroyerDirective implements OnIn
     }
     
     onBlockAdded(blockAddedEvent: IPepLayoutBlockAddedEvent) {
-        debugger;
         this.pagesService.addBlock(blockAddedEvent);
     }
 
