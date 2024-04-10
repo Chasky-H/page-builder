@@ -30,6 +30,7 @@ export interface IPageEditor {
 
 export interface IBlockEditor {
     id: string,
+    // title: string,
     remoteModuleOptions?: PepRemoteLoaderOptions,
     hostObject?: any
 }
@@ -69,6 +70,12 @@ export class PagesService {
     readonly PAGE_SIZE_LIMITATION_OBJECT = {
         key: 'PAGE_SIZE_LIMITATION',
         value: 150
+    }
+
+    // This subject is for block number limitation change (Usage only in edit mode).
+    private _blocksNumberLimitation: BehaviorSubject<number> = new BehaviorSubject<number>(this.BLOCKS_NUMBER_LIMITATION_OBJECT.value);
+    get blocksNumberLimitationChange$(): Observable<any> {
+        return this._blocksNumberLimitation.asObservable().pipe(distinctUntilChanged());
     }
 
     // This subject is for load available blocks data on the main editor (Usage only in edit mode).
@@ -126,8 +133,8 @@ export class PagesService {
     }
     
     // This is for editor mode for load the blocks (with the CPI events only once) after the block is changed.
-    private _blockLoadEventSubject = new BehaviorSubject<{ blockKey: string, newBlock: boolean}>({ blockKey: '', newBlock: false });
-    get blockLoadEventDebouncedSubject$(): Observable<{ blockKey: string, newBlock: boolean}> {
+    private _blockLoadEventSubject = new BehaviorSubject<{ blockKey: string }>({ blockKey: '' });
+    get blockLoadEventDebouncedSubject$(): Observable<{ blockKey: string }> {
         return this._blockLoadEventSubject.asObservable().pipe(debounceTime(250));
     }
     
@@ -168,9 +175,9 @@ export class PagesService {
         });
 
         // Create subject for load the events for block load only once when there is changes in the blocks editor.
-        this.blockLoadEventDebouncedSubject$.subscribe((eventValue: { blockKey: string, newBlock: boolean}) => {
+        this.blockLoadEventDebouncedSubject$.subscribe((eventValue: { blockKey: string }) => {
             if (this.layoutBuilderService.editMode) {
-                this.raiseClientEventForBlock(CLIENT_ACTION_ON_CLIENT_PAGE_BLOCK_LOAD, eventValue.blockKey, null, eventValue.newBlock);
+                this.raiseClientEventForBlock(CLIENT_ACTION_ON_CLIENT_PAGE_BLOCK_LOAD, eventValue.blockKey, null);
             }
         });
     }
@@ -248,7 +255,7 @@ export class PagesService {
         this.notifyStateChange(res.State);
 
         const pageView = this._pageViewSubject.getValue();
-        
+
         // Merge the page view blocks.
         for (let index = 0; index < res.PageView.Blocks.length; index++) {
             const blockView = res.PageView.Blocks[index];
@@ -386,6 +393,9 @@ export class PagesService {
                     this.handlePageBlockViewChangeResult(res, newBlock ? blockKey : '');
                 } else {
                     // TODO: Show error?
+
+                    // TODO: Unlock?
+                    // this.layoutBuilderService.lockScreen(false);
                 }
             }
         });
@@ -507,7 +517,15 @@ export class PagesService {
         this.notifyPageInEditorChange(page);
 
         // Notify that the block is changed (to raise the CPI event).
-        this._blockLoadEventSubject.next({ blockKey: block.Key, newBlock: newBlock });
+        if (newBlock) {
+            // Raise the event for the new block.
+            if (this.layoutBuilderService.editMode) {
+                this.raiseClientEventForBlock(CLIENT_ACTION_ON_CLIENT_PAGE_BLOCK_LOAD, block.Key, null, true);
+            }
+        } else {
+            // Raise the event for the updated block (with debounce time).
+            this._blockLoadEventSubject.next({ blockKey: block.Key });
+        }
     }
 
     private notifyBlockProgressMapChange() {
@@ -568,6 +586,7 @@ export class PagesService {
             if (!isNaN(valueAsNumber)) {
                 if (key === this.BLOCKS_NUMBER_LIMITATION_OBJECT.key) {
                     this.BLOCKS_NUMBER_LIMITATION_OBJECT.value = valueAsNumber;
+                    this._blocksNumberLimitation.next(valueAsNumber);
                 } else if (key === this.PAGE_SIZE_LIMITATION_OBJECT.key) {
                     this.PAGE_SIZE_LIMITATION_OBJECT.value = valueAsNumber;
                 }
@@ -796,6 +815,11 @@ export class PagesService {
     /*                                  Public functions
     /***********************************************************************************************/
 
+    getBlockTitle(blockKey: string): string {
+        const block = this.getBlockByKeyForEditor(blockKey);
+        return block?.Configuration.Resource || blockKey;
+    }
+
     getBlockEditor(blockKey: string): IBlockEditor {
         let res: IBlockEditor = null;
         const block = this.getBlockByKeyForEditor(blockKey);
@@ -907,6 +931,9 @@ export class PagesService {
     }
 
     addBlock(blockAddedEvent: IPepLayoutBlockAddedEvent) {
+        // Lock the screen.
+        this.layoutBuilderService.lockScreen(true);
+
         // Create new block from the availableBlockData (previousContainer.data.availableBlockData is AvailableBlockData object).
         const availableBlockData: IAvailableBlockData = blockAddedEvent.DraggableItem.data.availableBlockData;
 
@@ -943,16 +970,16 @@ export class PagesService {
 
         if (bpToUpdate && !bpToUpdate.loaded) {
             // Load editor only for the first time if openEditorOnLoaded is true.
-            if (bpToUpdate.openEditorOnLoaded) {
-                // // setTimeout 0 for navigate on the UI thread.
-                // setTimeout(() => {
-                //     this.navigateToEditor('block', bpToUpdate.block.Key);
+            // if (bpToUpdate.openEditorOnLoaded) {
+            //     // setTimeout 0 for navigate on the UI thread.
+            //     setTimeout(() => {
+            //         this.navigateToEditor('block', bpToUpdate.block.Key);
 
-                //     // unlock the screen.
-                //     // this.layoutBuilderHelperService.setLockScreen(false);
-                // }, 0);
-            }
-
+            //         // unlock the screen.
+            //         this.layoutBuilderService.setLockScreen(false);
+            //     }, 0);
+            // }
+            this.layoutBuilderService.lockScreen(false);
             bpToUpdate.loaded = true;
 
             this.notifyBlockProgressMapChange();
