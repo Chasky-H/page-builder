@@ -2,7 +2,7 @@ import { ABaseCrudTests } from "./aCrudTest.test";
 import { ITestExecutor } from "../../interfaces/TestExecutor";
 import { randomIntFromInterval } from "../../utillities/mock-page.util";
 
-export class varVariablesTest extends ABaseCrudTests implements ITestExecutor {
+export class VarVariablesTest extends ABaseCrudTests implements ITestExecutor {
   title: string = "VarVariablesTest";
   pageKey: string = "";
 
@@ -36,7 +36,6 @@ export class varVariablesTest extends ABaseCrudTests implements ITestExecutor {
         };
 
         const res = await service.savePagesVariables(testObject);
-        console.log(res);
 
         expect(res.BLOCKS_NUMBER_LIMITATION)
           .to.be.a("number")
@@ -62,7 +61,6 @@ export class varVariablesTest extends ABaseCrudTests implements ITestExecutor {
         expect(getAfterRes.Key)
           .to.be.a("string")
           .that.is.equal("PagesVariables");
-        console.log(getAfterRes);
       });
     });
   }

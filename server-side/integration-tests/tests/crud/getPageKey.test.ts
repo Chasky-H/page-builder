@@ -2,7 +2,7 @@ import { ABaseCrudTests } from "./aCrudTest.test";
 import { ITestExecutor } from "../../interfaces/TestExecutor";
 
 export class GetPageKeyTest extends ABaseCrudTests implements ITestExecutor {
-  title: string = "GetPagesByKeyTest";
+  title: string = "GetPageKeyTest";
   pageKey: string = "";
 
   tests(

@@ -68,7 +68,6 @@ export class CreatePageTest extends ABaseCrudTests implements ITestExecutor {
           for (const page of currentPages) {
             expect(page.Key).not.to.be.equal(this.pageKey);
           }
-          expect(1).to.be.equal(1);
         } else {
           throw new Error("Page key was not passed");
         }
