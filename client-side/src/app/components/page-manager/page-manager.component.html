@@ -8,13 +8,13 @@
         <page-builder-editor class="layout-builder-editor-group" (pageNameChange)="onPageNameChange($event)"></page-builder-editor>
     </ng-container>
 
-    <div block-editor-content>
+    <ng-container block-editor-content>
         <pep-remote-loader-element *ngIf="layoutBuilderService.editableState && currentBlockEditor?.remoteModuleOptions"
             [options]="currentBlockEditor?.remoteModuleOptions" 
             [props]="{ hostObject: currentBlockEditor?.hostObject }"
             [events]="{ hostEvents: onBlockEditorHostEventsCallback }">
         </pep-remote-loader-element>
-    </div>
+    </ng-container>
     
     <ng-container header-end-content>
         <div *ngIf="pageSizeLimitInPercentage > MIN_PERCENTAGE_TO_SHOW_LIMIT" class="size-limit-container pep-button sm disable">
@@ -30,77 +30,3 @@
         <page-builder-internal></page-builder-internal>
     </ng-container>
 </pep-layout-builder>
-
-<!-- <div *ngIf="lockScreen" class="cdk-overlay-backdrop cdk-overlay-dark-backdrop cdk-overlay-backdrop-showing"></div>
-
-<pep-page-layout [showShadow]="!previewMode && currentEditor" >
-    <div pep-side-area *ngIf="!previewMode && currentEditor" style="height: inherit;">
-        <pep-side-bar #sideBar [ignoreResize]="true" (stateChange)="onSidebarStateChange($event)">
-            <div header-content class="side-bar-title">
-                <pep-button class="back-button" sizeType="sm" iconName="arrow_left_alt" (buttonClick)="onNavigateBackFromEditor();"></pep-button>
-                <div class="title title-lg ellipsis" [title]="currentEditor?.title">
-                    <span>{{ currentEditor?.title }}</span>
-                </div>
-            </div>
-            <div class="page-builder-editor-wrapper">
-                <page-builder-editor *ngIf="currentEditor?.type === 'page-builder'" [sectionsColumnsDropList]="sectionsColumnsDropList"
-                    [hostObject]="currentEditor?.hostObject" (hostObjectChange)="onPageEditorObjectChange($event)"></page-builder-editor>
-            
-                <section-editor *ngIf="currentEditor?.type === 'section'" 
-                    [hostObject]="currentEditor?.hostObject" (hostObjectChange)="onSectionEditorObjectChange($event)"></section-editor>
-            
-                <ng-container *ngIf="currentEditor?.type === 'block'">
-                    <pep-remote-loader-element *ngIf="currentEditor?.remoteModuleOptions"
-                        [options]="currentEditor?.remoteModuleOptions" 
-                        [props]="{ hostObject: currentEditor?.hostObject }"
-                        [events]="{ hostEvents: onBlockEditorHostEventsCallback }">
-                    </pep-remote-loader-element>
-                </ng-container>
-            </div>
-        </pep-side-bar>
-    </div>
-    <ng-container pep-main-area>
-        <div class="main-area-container" [ngClass]="{'preview-mode': previewMode }">
-            <div class="header-container" >
-                <ng-container *ngIf="!previewMode; then editorTitleTemplate; else previewTitleTemplate"></ng-container>
-                <ng-template #editorTitleTemplate>
-                    <div>
-                        <span class="header-title body-xs">{{('PAGE_MANAGER.VIEWPORT_WIDTH' | translate)}}:&nbsp;</span>
-                        <span class="body-xs"><b>{{viewportWidth}}</b></span>
-                    </div>
-                </ng-template>
-                <ng-template #previewTitleTemplate>
-                    <div class="preview-title body-sm">
-                        <span>{{('PAGE_MANAGER.PREVIEW_TITLE' | translate)}}</span>
-                    </div>
-                </ng-template>
-
-                <div class="header-group-btn">
-                    <pep-group-buttons [buttons]="screenTypes" [selectedButtonKey]="selectedScreenType" sizeType="sm" viewType="toggle" >
-                    </pep-group-buttons>
-                </div>
-
-                <ng-container *ngIf="!previewMode; then editorButtonsTemplate; else previewButtonsTemplate"></ng-container>
-                <ng-template #editorButtonsTemplate>
-                    <div class="header-end">
-                        <div *ngIf="pageSizeLimitInPercentage > MIN_PERCENTAGE_TO_SHOW_LIMIT" class="size-limit-container pep-button sm disable pep-spacing-element">
-                            <span class="title-xs">{{ 'MESSAGES.PAGE_SIZE_LIMIT_TITLE' | translate }}&nbsp;</span>
-                            <span class="title-sm color-caution bold">{{ pageSizeString }}</span>
-                        </div>
-                        <pep-button key='Preview' [value]="'ACTIONS.PREVIEW' | translate" sizeType="sm" classNames="pep-spacing-element" (buttonClick)="togglePreviewMode()" [disabled]="isOverPageSizeLimit"></pep-button>
-                        <pep-button key='Save' [value]="'ACTIONS.SAVE' | translate" sizeType="sm" classNames="pep-spacing-element" (buttonClick)="onSaveClick()" [disabled]="isOverPageSizeLimit"></pep-button>
-                        <pep-button key='Publish' [value]="'ACTIONS.PUBLISH' | translate" sizeType="sm" classNames="pep-spacing-element" styleType="strong" (buttonClick)="onPublishClick();" [disabled]="isOverPageSizeLimit">
-                        </pep-button>
-                    </div>
-                </ng-template>
-                <ng-template #previewButtonsTemplate>
-                    <a class="color-link body-sm" (click)="togglePreviewMode()" href="javascript:void(0)">{{('PAGE_MANAGER.PREVIEW_CLICK_HERE' | translate)}}</a>    
-                </ng-template>
-            </div>
-            <div #pageBuilderWrapper class="page-builder-wrapper" [ngClass]="{'limit-min-width': selectedScreenType === 'Landscape' }">
-                <page-builder-internal [editMode]="!previewMode" [screenSize]="screenSize" [sectionsColumnsDropList]="sectionsColumnsDropList"></page-builder-internal>
-                <div *ngIf="!previewMode" class="backdrop" [ngClass]="{'show-backdrop': currentEditor?.type === 'section' || currentEditor?.type === 'block'}"></div>
-            </div>
-        </div>
-    </ng-container>
-</pep-page-layout> -->
