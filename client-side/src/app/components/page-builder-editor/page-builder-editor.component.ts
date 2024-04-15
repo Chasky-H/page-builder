@@ -140,7 +140,7 @@ export class PageBuilderEditorComponent extends BaseDestroyerDirective implement
     }
     
     openParametersPickerDialog() {
-        const config = this.dialogService.getDialogConfig({ disableClose: false }, 'full-screen');
+        const config = this.dialogService.getDialogConfig({ disableClose: false }, 'large');
         const data = {
             parameters: this.parameters || []
         };
