@@ -14,12 +14,12 @@ export class CreatePageTest extends ABaseCrudTests implements ITestExecutor {
   ): void {
     describe("Page Builder POST Endpoints - Publish page", async () => {
       it("POST Publish Page", async () => {
-        const service = this.pagesApiService();
+        const service = this.pagesExternalApiService();
         const testPage = generateMockPage();
         this.pageKey = testPage.Key as string;
 
-        const newPage = await service.publishPage(testPage);
-
+        const newPage = await service.upsertPage(testPage);
+        await service.sleep(3000);
         expect(newPage.Key)
           .to.be.a("string")
           .that.has.lengthOf(36)
@@ -37,7 +37,7 @@ export class CreatePageTest extends ABaseCrudTests implements ITestExecutor {
           .that.is.equal(testPage.Description);
 
         //get page from api to make sure same content as the created and created result
-        const gottenPage = await service.getPage(this.pageKey);
+        const gottenPage = await service.get_page(`?key=${this.pageKey}`);
 
         expect(gottenPage.Key)
           .to.be.a("string")

@@ -98,4 +98,56 @@ export class PagesExternalApiService {
     }
     return auditLogResponse;
   }
+
+  async get_page(queryString?: string) {
+    const url =
+      queryString && queryString.length > 0
+        ? `/addons/api/${this.addonUUID}/api/get_page${queryString}`
+        : `/addons/api/${this.addonUUID}/api/get_page`;
+    return await this.papiClient.get(url);
+  }
+
+  async upsertPage(page: Object) {
+    return await this.papiClient.post(
+      `/addons/api/${this.addonUUID}/api/pages`,
+      page
+    );
+  }
+
+  async getPages(queryString?: string) {
+    const url =
+      queryString && queryString.length > 0
+        ? `/addons/api/${this.addonUUID}/api/pages${queryString}`
+        : `/addons/api/${this.addonUUID}/api/pages`;
+    return await this.papiClient.get(url);
+  }
+
+  async getPagesVarVariables(queryString?: string) {
+    const url =
+      queryString && queryString.length > 0
+        ? `/addons/api/${this.addonUUID}/api/pages_variables${queryString}`
+        : `/addons/api/${this.addonUUID}/api/pages_variables`;
+    return await this.papiClient.get(url);
+  }
+
+  async upsertPagesVarVariables(options: Object) {
+    return await this.papiClient.post(
+      `/addons/api/${this.addonUUID}/api/pages_variables`,
+      options
+    );
+  }
+
+  async pagesImportFile(object: Object) {
+    return await this.papiClient.post(
+      `/addons/api/${this.addonUUID}/api/pages_import_file`,
+      object
+    );
+  }
+
+  async pagesExportFile(object: Object) {
+    return await this.papiClient.post(
+      `/addons/api/${this.addonUUID}/api/pages_export_file`,
+      object
+    );
+  }
 }

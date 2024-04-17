@@ -13,8 +13,8 @@ export class VarVariablesTest extends ABaseCrudTests implements ITestExecutor {
   ): void {
     describe("Page Builder VAR Endpoints Test", async () => {
       it("GET from VAR", async () => {
-        const service = this.pagesApiService();
-        const varFields = await service.getPagesVariables();
+        const service = this.pagesExternalApiService();
+        const varFields = await service.getPagesVarVariables();
 
         expect(varFields.BLOCKS_NUMBER_LIMITATION)
           .to.be.a("number")
@@ -28,14 +28,14 @@ export class VarVariablesTest extends ABaseCrudTests implements ITestExecutor {
       it("POST to VAR", async () => {
         const limit = randomIntFromInterval(10, 20);
         const size = randomIntFromInterval(100, 200);
-        const service = this.pagesApiService();
+        const service = this.pagesExternalApiService();
         const testObject = {
           Key: "PagesVariables",
           PAGE_SIZE_LIMITATION: size,
           BLOCKS_NUMBER_LIMITATION: limit,
         };
 
-        const res = await service.savePagesVariables(testObject);
+        const res = await service.upsertPagesVarVariables(testObject);
 
         expect(res.BLOCKS_NUMBER_LIMITATION)
           .to.be.a("number")
@@ -48,7 +48,7 @@ export class VarVariablesTest extends ABaseCrudTests implements ITestExecutor {
         expect(res.Key).to.be.a("string").that.is.equal("PagesVariables");
         expect(res.Hidden).to.be.a("boolean").that.is.false;
 
-        const getAfterRes = await service.getPagesVariables();
+        const getAfterRes = await service.getPagesVarVariables();
 
         expect(getAfterRes.BLOCKS_NUMBER_LIMITATION)
           .to.be.a("number")

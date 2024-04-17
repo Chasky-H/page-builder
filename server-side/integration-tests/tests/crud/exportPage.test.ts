@@ -14,20 +14,18 @@ export class ExportPageTest extends ABaseCrudTests implements ITestExecutor {
   ): void {
     describe("Page Builder Export Endpoints Test", async () => {
       it("GET Page from DIMX - Export", async () => {
-        const service = this.pagesApiService();
-        const externalService = this.pagesExternalApiService();
-        const pageList = await service.getPublishedPages();
+        const service = this.pagesExternalApiService();
+        const pageList = await service.getPages();
         this.pageKey = pageList[0]?.Key as string;
-        const exportedObjects = await service.exportPageFile({
+        const exportedObjects = await service.pagesExportFile({
           IncludeObjects: true,
           Where: `Key='${this.pageKey}'`,
         });
         if (exportedObjects?.URI) {
-          const auditLogResponse =
-            await externalService.getAuditLogResultObjectIfValid(
-              exportedObjects.URI,
-              50
-            );
+          const auditLogResponse = await service.getAuditLogResultObjectIfValid(
+            exportedObjects.URI,
+            50
+          );
           const resultObject = JSON.parse(
             auditLogResponse.AuditInfo.ResultObject
           );
@@ -55,7 +53,7 @@ export class ExportPageTest extends ABaseCrudTests implements ITestExecutor {
           expect(resource.Profiles).to.be.an("array").that.has.lengthOf(0);
           expect(resourceData.AddonUUID)
             .to.be.a("string")
-            .that.is.equal(externalService.addonUUID);
+            .that.is.equal(service.addonUUID);
           expect(resourceData.Resource)
             .to.be.a("string")
             .that.is.equal("Pages");
@@ -81,17 +79,15 @@ export class ExportPageTest extends ABaseCrudTests implements ITestExecutor {
         }
       });
       it("POST Pages to DIMX - Import", async () => {
-          const service = this.pagesApiService();
-          const externalService = this.pagesExternalApiService();
+        const service = this.pagesExternalApiService();
 
-          const importObject = await service.importPageFile(
-            this.exportedPageForImport
-          );
-          const auditLogResponse =
-          await externalService.getAuditLogResultObjectIfValid(
-            importObject.URI as string,
-            50
-          );
+        const importObject = await service.pagesImportFile(
+          this.exportedPageForImport
+        );
+        const auditLogResponse = await service.getAuditLogResultObjectIfValid(
+          importObject.URI as string,
+          50
+        );
         const resultObject = JSON.parse(
           auditLogResponse.AuditInfo.ResultObject
         );
@@ -101,26 +97,24 @@ export class ExportPageTest extends ABaseCrudTests implements ITestExecutor {
             headers: { "Content-Type": "application/json" },
           })
         ).json();
-        
+
         const updateData = getDataFromFile[0];
 
         expect(updateData.Key).to.be.a("string").that.has.lengthOf(36);
         expect(updateData.Status).to.be.a("string").that.is.equal("Update");
       });
       it("GET Page from DIMX - Export After Import", async () => {
-        const service = this.pagesApiService();
-        const externalService = this.pagesExternalApiService();
-        
-        const exportedObjects = await service.exportPageFile({
+        const service = this.pagesExternalApiService();
+
+        const exportedObjects = await service.pagesExportFile({
           IncludeObjects: true,
           Where: `Key='${this.pageKey}'`,
         });
         if (exportedObjects?.URI) {
-          const auditLogResponse =
-            await externalService.getAuditLogResultObjectIfValid(
-              exportedObjects.URI,
-              50
-            );
+          const auditLogResponse = await service.getAuditLogResultObjectIfValid(
+            exportedObjects.URI,
+            50
+          );
           const resultObject = JSON.parse(
             auditLogResponse.AuditInfo.ResultObject
           );
@@ -148,7 +142,7 @@ export class ExportPageTest extends ABaseCrudTests implements ITestExecutor {
           expect(resource.Profiles).to.be.an("array").that.has.lengthOf(0);
           expect(resourceData.AddonUUID)
             .to.be.a("string")
-            .that.is.equal(externalService.addonUUID);
+            .that.is.equal(service.addonUUID);
           expect(resourceData.Resource)
             .to.be.a("string")
             .that.is.equal("Pages");

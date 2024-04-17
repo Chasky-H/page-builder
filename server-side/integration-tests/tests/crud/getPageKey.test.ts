@@ -12,8 +12,8 @@ export class GetPageKeyTest extends ABaseCrudTests implements ITestExecutor {
   ): void {
     describe("Page Builder GET Endpoints - from list & by key", async () => {
       it("Get Published Pages Test", async () => {
-        const service = this.pagesApiService();
-        const pages = await service.getPublishedPages();
+        const service = this.pagesExternalApiService();
+        const pages = await service.getPages();
         this.pageKey = pages[0].Key as string;
 
         expect(pages).to.be.an("array").and.to.have.length.greaterThan(0);
@@ -53,9 +53,9 @@ export class GetPageKeyTest extends ABaseCrudTests implements ITestExecutor {
       });
 
       it("Get Page By Key Test", async () => {
-        const service = this.pagesApiService();
-        const pageByKey = await service.getPage(this.pageKey);
-
+        const service = this.pagesExternalApiService();
+        const pagesByKey = await service.getPages(`?where=Key='${this.pageKey}'`);
+        const pageByKey = pagesByKey[0];
         expect(pageByKey).to.be.an("object").that.is.not.empty;
         expect(pageByKey.Description)
           .to.be.a("string")
