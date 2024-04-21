@@ -21,11 +21,15 @@ export class ExportPageTest extends ABaseCrudTests implements ITestExecutor {
           IncludeObjects: true,
           Where: `Key='${this.pageKey}'`,
         });
+        console.log("Exported objects")
+        console.log(exportedObjects);
         if (exportedObjects?.URI) {
           const auditLogResponse = await service.getAuditLogResultObjectIfValid(
             exportedObjects.URI,
             50
           );
+          console.log("audit res")
+          console.log(auditLogResponse);
           const resultObject = JSON.parse(
             auditLogResponse.AuditInfo.ResultObject
           );
