@@ -87,6 +87,7 @@ export class ExportPageTest extends ABaseCrudTests implements ITestExecutor {
         const importObject = await service.pagesImportFile(
           this.exportedPageForImport
         );
+        await service.sleep(3000);
         const auditLogResponse = await service.getAuditLogResultObjectIfValid(
           importObject.URI as string,
           50
