@@ -60,13 +60,13 @@ export class PagesExternalApiService {
           : auditLogResponse[0];
       //This case is used when AuditLog was not created at all (This can happen and it is valid)
       if (auditLogResponse === null) {
-        this.sleep(4000);
+        await this.sleep(4000);
         console.log("Audit Log was not found, waiting...");
         loopsAmount--;
       }
       //This case will only retry the get call again as many times as the "loopsAmount"
       else if (auditLogResponse.Status.ID == "2") {
-        this.sleep(2000);
+        await this.sleep(2000);
         console.log(
           "In_Progres: Status ID is 2, Retry " + loopsAmount + " Times."
         );
