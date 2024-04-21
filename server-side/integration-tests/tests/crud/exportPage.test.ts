@@ -21,8 +21,7 @@ export class ExportPageTest extends ABaseCrudTests implements ITestExecutor {
           IncludeObjects: true,
           Where: `Key='${this.pageKey}'`,
         });
-        console.log("Exported objects")
-        console.log(exportedObjects);
+        await service.sleep(3000);
         if (exportedObjects?.URI) {
           const auditLogResponse = await service.getAuditLogResultObjectIfValid(
             exportedObjects.URI,
@@ -114,6 +113,7 @@ export class ExportPageTest extends ABaseCrudTests implements ITestExecutor {
           IncludeObjects: true,
           Where: `Key='${this.pageKey}'`,
         });
+        await service.sleep(3000);
         if (exportedObjects?.URI) {
           const auditLogResponse = await service.getAuditLogResultObjectIfValid(
             exportedObjects.URI,
