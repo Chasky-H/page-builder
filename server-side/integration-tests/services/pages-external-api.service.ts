@@ -15,7 +15,6 @@ export class PagesExternalApiService {
       token: client.OAuthAccessToken,
       addonUUID: client.AddonUUID,
       addonSecretKey: client.AddonSecretKey,
-      actionUUID: client.ActionUUID,
     });
   }
 
