@@ -98,6 +98,7 @@ export class PagesExternalApiService {
     return auditLogResponse;
   }
 
+  //methods to call addonAPI
   async get_page(queryString?: string) {
     const url =
       queryString && queryString.length > 0
