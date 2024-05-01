@@ -295,6 +295,9 @@ export class PagesApiService {
                 OnLoadFlow: {
                     Type: "Object",
                 },
+                OnParameterChangeFlow: {
+                    Type: "Object",
+                },
                 OnChangeFlow: {
                     Type: "Object",
                 },

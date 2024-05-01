@@ -299,6 +299,11 @@ class ClientPagesService {
         
         const changedParameters = await this.runBlockEndpointForEventInternal(eventType, page, block, availableBlocksMap, pageState, bodyExtra, updatedBlocksMap, context);
         
+        // TODO:
+        // Run the OnParameterChangeFlow before we start change the consumers (for override page parameters data).
+        // await this.runPageFlow('parameter-change', page, changedParameters, context as IContextWithData);
+
+
         // Call to override blocks data when parameters change.
         if (Object.keys(changedParameters).length > 0) {
             const pageLoadEvent = eventType === 'page-load';
@@ -429,8 +434,8 @@ class ClientPagesService {
         return mergedParameters;
     }
 
-    private async runPageFlow(pageFlowType: 'load' | 'change', page: Page, pageParameters: any, eventData: IContextWithData): Promise<void> {
-        const flowToRun: any = pageFlowType === 'load' ? page?.OnLoadFlow : page?.OnChangeFlow;
+    private async runPageFlow(pageFlowType: 'load' | 'change' | 'parameter-change', page: Page, pageParameters: any, eventData: IContextWithData): Promise<void> {
+        const flowToRun: any = pageFlowType === 'load' ? page?.OnLoadFlow : (pageFlowType === 'change' ? page?.OnChangeFlow : page?.OnParameterChangeFlow);
 
         // If the flowToRun exist run it.
         if (flowToRun?.FlowKey?.length > 0) {

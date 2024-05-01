@@ -433,7 +433,10 @@ export class PagesValidatorService {
 
         // Validate OnLoadFlow
         this.validateObjectProperty(page, 'OnLoadFlow', pagePropertyBreadcrumb, true, 'object');
-        
+
+        // Validate OnParameterChangeFlow
+        this.validateObjectProperty(page, 'OnParameterChangeFlow', pagePropertyBreadcrumb, true, 'object');
+
         // Validate OnChangeFlow
         this.validateObjectProperty(page, 'OnChangeFlow', pagePropertyBreadcrumb, true, 'object');
 
@@ -490,6 +493,9 @@ export class PagesValidatorService {
         // Add OnLoadFlow
         this.addOptionalPropertyIfExist(page, res, 'OnLoadFlow');
         
+        // Add OnParameterChangeFlow
+        this.addOptionalPropertyIfExist(page, res, 'OnParameterChangeFlow');
+
         // Add OnChangeFlow
         this.addOptionalPropertyIfExist(page, res, 'OnChangeFlow');
         

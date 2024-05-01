@@ -25,6 +25,7 @@
         "PARAMETERS_TITLE": "Parameters",
         "MANAGE_PARAMETERS": "Manage parameters",
         "ON_LOAD_FLOW_TITLE": "On load flow",
+        "ON_PARAMETER_CHANGE_FLOW_TITLE": "On parameter change flow",
         "ON_CHANGE_FLOW_TITLE": "On change flow",
         "CHOOSE_FLOW": "Choose flow",
         "BLOCKS_TITLE": "Blocks",

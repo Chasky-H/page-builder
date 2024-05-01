@@ -25,6 +25,7 @@ export interface IPageEditor {
     pageDescription: string,
     parameters: IParamemeter[],
     onLoadFlow: any,
+    onParameterChangeFlow: any,
     onChangeFlow: any,
 }
 
@@ -924,6 +925,7 @@ export class PagesService {
             page.Description = pageData.pageDescription;
             page.Parameters = pageData.parameters;
             page.OnLoadFlow = pageData.onLoadFlow;
+            page.OnParameterChangeFlow = pageData.onParameterChangeFlow;
             page.OnChangeFlow = pageData.onChangeFlow;
             
             this.notifyPageInEditorChange(page);

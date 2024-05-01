@@ -36,6 +36,14 @@ export class PageBuilderEditorComponent extends BaseDestroyerDirective implement
         return this._onLoadFlow;
     }
     
+    private _onParameterChangeFlow: any = {};
+    set onParameterChangeFlow(value: any) {
+        this._onParameterChangeFlow = value;
+    }
+    get onParameterChangeFlow(): any {
+        return this._onParameterChangeFlow;
+    }
+
     private _onChangeFlow: any = {};
     set onChangeFlow(value: any) {
         this._onChangeFlow = value;
@@ -45,6 +53,7 @@ export class PageBuilderEditorComponent extends BaseDestroyerDirective implement
     }
 
     onLoadFlowHostObject;
+    onParameterChangeFlowHostObject;
     onChangeFlowHostObject;
     parametersDialogRef: MatDialogRef<any> = null;
 
@@ -55,7 +64,7 @@ export class PageBuilderEditorComponent extends BaseDestroyerDirective implement
         super();
     }
 
-    private prepareFlowHostObject(pageFlowType: 'load' | 'change') {
+    private prepareFlowHostObject(pageFlowType: 'load' | 'change' | 'parameter-change') {
         const fields = {};
         
         for (let index = 0; index < this.parameters.length; index++) {
@@ -76,6 +85,10 @@ export class PageBuilderEditorComponent extends BaseDestroyerDirective implement
             this.onLoadFlowHostObject = {};
             this.onLoadFlowHostObject['runFlowData'] = this.onLoadFlow;
             this.onLoadFlowHostObject['fields'] = fields;
+        } else if (pageFlowType === 'parameter-change') {
+            this.onParameterChangeFlowHostObject = {};
+            this.onParameterChangeFlowHostObject['runFlowData'] = this.onParameterChangeFlow;
+            this.onParameterChangeFlowHostObject['fields'] = fields;
         } else if (pageFlowType === 'change') {
             this.onChangeFlowHostObject = {};
             this.onChangeFlowHostObject['runFlowData'] = this.onChangeFlow;
@@ -89,10 +102,12 @@ export class PageBuilderEditorComponent extends BaseDestroyerDirective implement
             pageDescription: this.pageDescription,
             parameters: this.parameters,
             onLoadFlow: this.onLoadFlow,
+            onParameterChangeFlow: this.onParameterChangeFlow,
             onChangeFlow: this.onChangeFlow
         };
         
         this.prepareFlowHostObject('load');
+        this.prepareFlowHostObject('parameter-change');
         this.prepareFlowHostObject('change');
 
         this.pagesService.updatePageFromEditor(pageEditor);
@@ -104,6 +119,7 @@ export class PageBuilderEditorComponent extends BaseDestroyerDirective implement
             this.pageDescription = pageData.Description;
             this.parameters = pageData.Parameters || [];
             this.onLoadFlow = pageData.OnLoadFlow || {};
+            this.onParameterChangeFlow = pageData.OnParameterChangeFlow || {};
             this.onChangeFlow = pageData.OnChangeFlow || {};
         }
     }
@@ -131,6 +147,11 @@ export class PageBuilderEditorComponent extends BaseDestroyerDirective implement
 
     onLoadFlowChange(flowData: any) {
         this.onLoadFlow = flowData;
+        this.updateHostObject();
+    }
+
+    onParameterChangeFlowChange(flowData: any) {
+        this.onParameterChangeFlow = flowData;
         this.updateHostObject();
     }
 
