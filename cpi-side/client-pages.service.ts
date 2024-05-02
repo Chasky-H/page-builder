@@ -1,6 +1,6 @@
 import { IContext, IContextWithData } from "@pepperi-addons/cpi-node/build/cpi-side/events";
 import { ConfigurationObject, NgComponentRelation, Page, PageBlock } from "@pepperi-addons/papi-sdk";
-import { RunFlowBody } from '@pepperi-addons/cpi-node';
+import { FlowObject, RunFlowBody } from '@pepperi-addons/cpi-node';
 import { IBlockLoaderData, IPageBuilderData, IPageClientEventResult, IPageView, getAvailableBlockData, IBlockEndpointResult, SYSTEM_PARAMETERS, IPageState, PAGES_TABLE_NAME } from "shared";
 import config from "../addon.config.json";
 
@@ -177,7 +177,7 @@ class ClientPagesService {
             // Get the cosumers of the changed params.
             const consumerBlocksMap = this.getConsumedParametersBlocks(page.Blocks, pageState.PageParameters, changedParameters);
 
-            // After we found the blocks that cosume these changedParameters, set the changedParameters in changedParametersToFilterFrom for filter from it after.
+            // After we found the blocks that consume these changedParameters, set the changedParameters in changedParametersToFilterFrom for filter from it after.
             let changedParametersToFilterFrom: any = { ...changedParameters }; 
             
             // If pageLoadEvent, then merge the changedParametersToFilterFrom into pageParameters, Else merge it after.
@@ -213,8 +213,15 @@ class ClientPagesService {
             // If not pageLoadEvent, then merge the changedParametersToFilterFrom into pageParameters.
             if (!pageLoadEvent) {
                 pageState.PageParameters = { ...pageState.PageParameters, ...changedParametersToFilterFrom };
-            }
 
+                // // TODO: Run this one time after all the blocks cpi runs???????.
+                // // ????????????????
+                // // Run the OnParameterChangeFlow after blocks cpi runs (for override there changes).
+                // if (Object.keys(changedParameters).length > 0 && !pageLoadEvent) {
+                //     changedParameters = await this.runPageFlow(page, page.OnParameterChangeFlow, changedParameters, pageState.PageParameters, context);
+                // }
+            }
+    
             // Call to override blocks data when parameters change.
             if (Object.keys(changedParameters).length > 0) {
                 await this.overrideBlocksDataWhenParametersChange(counter++, pageLoadEvent, page, availableBlocksMap, pageState, changedParameters, updatedBlocksMap, context);
@@ -297,12 +304,12 @@ class ClientPagesService {
     private async runPageBlockEndpointForEvent(eventType: PagesClientActionType, page: Page, block: PageBlock, availableBlocksMap: Map<string, IBlockLoaderData>, 
         pageState: IPageState, bodyExtra: any, updatedBlocksMap: Map<string, PageBlock>, context: IContext | undefined): Promise<any> {
         
-        const changedParameters = await this.runBlockEndpointForEventInternal(eventType, page, block, availableBlocksMap, pageState, bodyExtra, updatedBlocksMap, context);
+        let changedParameters = await this.runBlockEndpointForEventInternal(eventType, page, block, availableBlocksMap, pageState, bodyExtra, updatedBlocksMap, context);
         
-        // TODO:
-        // Run the OnParameterChangeFlow before we start change the consumers (for override page parameters data).
-        // await this.runPageFlow('parameter-change', page, changedParameters, context as IContextWithData);
-
+        if (Object.keys(changedParameters).length > 0 && eventType !== 'page-load') {
+            // Run the OnParameterChangeFlow after block cpi runs (for override his changes).
+            changedParameters = await this.runPageFlow(page, page.OnParameterChangeFlow, changedParameters, pageState.PageParameters, context);
+        }
 
         // Call to override blocks data when parameters change.
         if (Object.keys(changedParameters).length > 0) {
@@ -434,12 +441,12 @@ class ClientPagesService {
         return mergedParameters;
     }
 
-    private async runPageFlow(pageFlowType: 'load' | 'change' | 'parameter-change', page: Page, pageParameters: any, eventData: IContextWithData): Promise<void> {
-        const flowToRun: any = pageFlowType === 'load' ? page?.OnLoadFlow : (pageFlowType === 'change' ? page?.OnChangeFlow : page?.OnParameterChangeFlow);
-
+    private async runPageFlow(page: Page, flowToRun: FlowObject, parametersToSend: any, allowedParameters: any, eventData: IContextWithData | undefined): Promise<any> {
+        const parametersToOverride = {...parametersToSend};
+        
         // If the flowToRun exist run it.
         if (flowToRun?.FlowKey?.length > 0) {
-            const mergedParameters = this.getMergedParameters(page, pageParameters);
+            const mergedAllowedParameters = this.getMergedParameters(page, allowedParameters);
             const dynamicParamsData: any = {};
             
             // Create dynamic params map for set the values (also for later usage when set the pageParameters).
@@ -456,7 +463,7 @@ class ClientPagesService {
                         dynamicParamsMap.set(key, value);
 
                         // Set the dynamic parameter value on the dynamicParamsData property.
-                        dynamicParamsData[value] = mergedParameters[value] || '';
+                        dynamicParamsData[value] = parametersToSend[value] || mergedAllowedParameters[value] || '';
                     }
                 }
             }
@@ -474,18 +481,20 @@ class ClientPagesService {
             for (let index = 0; index < resultKeys.length; index++) {
                 const key = resultKeys[index];
                 
-                // Override pageParameters for all the matches keys in mergedParameters object that returned in the flow result.
+                // Override mergedParameters for all the matches keys in the returned flow result.
                 const pagePropName = dynamicParamsMap.get(key);
-                if (pagePropName && mergedParameters.hasOwnProperty(pagePropName)) {
-                    pageParameters[pagePropName] = flowResult[key];
+                if (pagePropName && mergedAllowedParameters.hasOwnProperty(pagePropName)) {
+                    parametersToOverride[pagePropName] = flowResult[key];
                 } else {
                     // TODO: Override also params that are not declared (not dynamic)??
-                    if (mergedParameters.hasOwnProperty(key)) {
-                        pageParameters[key] = flowResult[key];
+                    if (mergedAllowedParameters.hasOwnProperty(key)) {
+                        parametersToOverride[key] = flowResult[key];
                     }
                 }
             }
         }
+
+        return parametersToOverride;
     }
 
     private async getPageBuilderData(eventData: IContextWithData): Promise<IPageBuilderData> {
@@ -582,7 +591,7 @@ class ClientPagesService {
         // pageState.PageParameters = this.getMergedParameters(tmpResult.page, pageState.PageParameters);
 
         // // Run the OnLoadFlow before we start (for override page parameters data).
-        // await this.runPageFlow('load', tmpResult.page, pageState.PageParameters, eventData);
+        // await this.runPageFlow(tmpResult.page, tmpResult.page.OnLoadFlow, pageState.PageParameters, eventData);
 
         // // Convert the availableBlocks to map.
         // const availableBlocksMap = this.getAvailableBlocksMap(tmpResult.availableBlocks);
@@ -603,7 +612,7 @@ class ClientPagesService {
         pageState.PageParameters = this.getMergedParameters(tmpResult.page, pageState.PageParameters);
 
         // Run the OnLoadFlow before we start (for override page parameters data).
-        await this.runPageFlow('load', tmpResult.page, pageState.PageParameters, eventData);
+        pageState.PageParameters = await this.runPageFlow(tmpResult.page, tmpResult.page.OnLoadFlow, pageState.PageParameters, pageState.PageParameters, eventData);
 
         // Convert the availableBlocks to map.
         const availableBlocksMap = this.getAvailableBlocksMap(tmpResult.availableBlocks);
@@ -626,10 +635,10 @@ class ClientPagesService {
  
         if (block) {
             // Run the OnChangeFlow before we start (for override page parameters data).
-            await this.runPageFlow('change', tmpResult.page, pageState.PageParameters, eventData);
-
+            pageState.PageParameters = await this.runPageFlow(tmpResult.page, tmpResult.page.OnChangeFlow, pageState.PageParameters, pageState.PageParameters, eventData);
+            
             const availableBlocksMap = this.getAvailableBlocksMap(tmpResult.availableBlocks);
-
+            
             // Get the changes from the data (Here we send the state and the state changes to the function).
             const changes = eventData.Changes.BlocksState[block.Key];
 
@@ -655,7 +664,7 @@ class ClientPagesService {
             
         if (block) {
             // Run the OnChangeFlow before we start (for override page parameters data).
-            await this.runPageFlow('change', tmpResult.page, pageState.PageParameters, eventData);
+            pageState.PageParameters = await this.runPageFlow(tmpResult.page, tmpResult.page.OnChangeFlow, pageState.PageParameters, pageState.PageParameters, eventData);
 
             const availableBlocksMap = this.getAvailableBlocksMap(tmpResult.availableBlocks);
             
