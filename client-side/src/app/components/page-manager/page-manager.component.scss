@@ -1,5 +1,6 @@
 @use '@pepperi-addons/ngx-lib/src/core/style/abstracts/variables';
-@use '../../../mixins.scss';
+@use '@pepperi-addons/ngx-lib/src/core/style/abstracts/mixins';
+@use '../../../mixins.scss' as local-mixins;
 
 // set mat tab as fixed tab just on the editors
 ::ng-deep {
@@ -174,7 +175,7 @@
             width: 100%;
             height: 100%;
             top: 0;
-            z-index: mixins.$z-index-min + 10;
+            z-index: local-mixins.$z-index-min + 10;
             display: none;
         
             &.show-backdrop {
