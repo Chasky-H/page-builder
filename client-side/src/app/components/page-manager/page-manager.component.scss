@@ -1,6 +1,4 @@
 @use '@pepperi-addons/ngx-lib/src/core/style/abstracts/variables';
-@use '@pepperi-addons/ngx-lib/src/core/style/abstracts/mixins';
-@use '../../../mixins.scss' as mix;
 
 .size-limit-container {
     border-radius: variables.$border-radius-md;
