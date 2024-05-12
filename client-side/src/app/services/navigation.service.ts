@@ -102,17 +102,17 @@ export class NavigationService {
         });
     }
 
-    unloadRouter() {
+    // We don't need this anymore, because we are using the connectRouter from ngx-lib -> Addon service when creating new element.
+    // Commented in version 2.5.11
+    initRouterToRoot() {
         if (this.router) {
             // debugger;
-            // this.router.dispose();
+            // this.router.initialNavigation();
             // const route: ActivatedRoute = this.getCurrentRoute(this.route);
-            this.router.navigate(['../'], {
-                skipLocationChange: true
-            });
-            // , {
+
+            // this.router.navigate(['../'], {
             //     relativeTo: route,
-            //     queryParamsHandling: 'merge'
+            //     skipLocationChange: true
             // });
         }
     }
