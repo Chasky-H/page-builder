@@ -1,10 +1,8 @@
 import { BaseTest } from "@pepperi-addons/addon-testing-framework";
 import { PapiClient } from "@pepperi-addons/papi-sdk";
-import { PagesApiService } from "../../../pages-api.service";
 import { PagesExternalApiService } from "../../services/pages-external-api.service";
 
 export abstract class ABaseCrudTests extends BaseTest {
-  protected _pagesApiService: PagesApiService | undefined;
   protected _pagesExternalApiService: PagesExternalApiService | undefined;
   protected _papiClient: PapiClient | undefined;
 

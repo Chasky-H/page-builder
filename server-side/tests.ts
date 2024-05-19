@@ -26,12 +26,12 @@ export async function tests(client: Client, request: Request)
 		{
 			throw new Error("Body parameter: Name must be a string");
 		}
-		const Test: new () => BaseTest = Tests[testName];
+		const Test: new (client) => BaseTest = Tests[testName];
 		if (!Test) 
 		{
 			throw new Error(`Test ${testName} not found`);
 		}
 
-		return new TestRunner(client, request).run(new Test());
+		return new TestRunner(client, request).run(new Test(client));
 	}
 }
