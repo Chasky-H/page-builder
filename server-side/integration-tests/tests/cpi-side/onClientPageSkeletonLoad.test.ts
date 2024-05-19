@@ -8,81 +8,74 @@ import { ABaseCpiSideTest } from "./aCPISideTest.test";
 
 export class OnClientPageSkeletonLoadTest extends ABaseCpiSideTest {
   title = "OnClientPageSkeletonLoadTest";
-  interceptor = 'OnClientPageSkeletonLoad';
+  interceptor = "OnClientPageSkeletonLoad";
   private testKey: string;
   pageKey: string;
 
   constructor(protected client: Client) {
     super(client);
     this.testKey = uuid();
-    this.pageKey = '';
+    this.pageKey = "";
   }
 
   async createTestEnv(): Promise<any> {
     return this.container.get(CPISideService, LocalCPISideService);
   }
 
-
   async test(expect: Chai.ExpectStatic): Promise<any> {
-    
     const apiService = this.pagesExternalApiService();
     const cpiService = this.pagesCPISideService();
     const page = await apiService.getPages();
     this.pageKey = page[0].Key;
-    debugger;
-    const emitBody = cpiService.emitEventBodyParser(this.interceptor,this.pageKey);
     
-    console.log(emitBody);
-    const emitEvent = await cpiService.emitEvent(this.interceptor,emitBody);
-   const x = {"PageKey":"25a83703-0239-4e8a-8514-15704e35f8f4","State":{"BlockState":{},"PageParameters":{}}}
-    console.log(emitEvent);
+    const emitBody = cpiService.emitEventBodyParser(this.interceptor, page[0]);
+
+    
+    const emitEvent = await cpiService.emitEvent(this.interceptor, emitBody);
+
+    expect(emitEvent.type).to.be.equal("Finish");
+    
+    const availableBlocksData = emitEvent?.data?.AvailableBlocksData[0];
+
+    expect(availableBlocksData.PageRemoteLoaderOptions).to.be.an("object");
+    expect(availableBlocksData.PageRemoteLoaderOptions.EditorElementName).to.be.a("string").that.has.length.greaterThanOrEqual(10);
+    expect(availableBlocksData.PageRemoteLoaderOptions.ModuleName).to.be.a("string").that.is.equal("WebComponents");
+    expect(availableBlocksData.PageRemoteLoaderOptions.RemoteEntry).to.be.a("string").that.has.length.greaterThanOrEqual(20);
+    expect(availableBlocksData.RelationAddonUUID).to.be.a("string").that.has.lengthOf(36);
+    expect(availableBlocksData.RelationAvailable).to.be.a("boolean");
+    expect(availableBlocksData.RelationName).to.be.an("string").that.has.length.greaterThanOrEqual(5);
+    expect(availableBlocksData.RelationTitle).to.be.an("string").that.has.length.greaterThanOrEqual(5);
+
+    const state = emitEvent?.data?.State;
+
+    expect(state.BlocksState).to.be.deep.equal({});
+    expect(state.PageParameters).to.be.deep.equal({});
+
+    const pageView = emitEvent?.data?.PageView;
+
+    expect(pageView.Name).to.be.a("string").that.has.length.greaterThanOrEqual(3);
+    expect(pageView.Key).to.be.a("string").that.has.length.lessThanOrEqual(36);
+    expect(pageView.Description).to.be.a("string").that.has.length.greaterThanOrEqual(5);
+
+    const layout = pageView?.Layout;
+
+    expect(layout.ColumnsGap).to.be.a("string").that.has.length.greaterThanOrEqual(2);
+    expect(layout.HorizontalSpacing).to.be.a("string").that.has.length.greaterThanOrEqual(2);
+    expect(layout.SectionsGap).to.be.a("string").that.has.length.greaterThanOrEqual(2);
+    expect(layout.VerticalSpacing).to.be.a("string").that.has.length.greaterThanOrEqual(2);
+    expect(layout.MaxWidth).to.be.a("number").that.is.equal(0);
+    expect(layout.HorizontalSpacing).to.be.a("string").that.has.length.greaterThanOrEqual(2);
+    expect(layout.Sections).to.be.an("array").that.has.length.greaterThanOrEqual(0);
+
+    const block = pageView?.Blocks[0];
 
 
+    expect(block.Configuration).to.be.an("object").that.is.not.empty;
+    expect(block.Key).to.be.a("string").that.has.lengthOf(36);
+    expect(block.RelationData.AddonUUID).to.be.a("string").that.has.lengthOf(36);
+    expect(block.RelationData.Name).to.be.a("string").that.has.length.greaterThanOrEqual(5);
 
-    // const filter = {
-    //   Fields: [
-    //     {
-    //       FieldID: "Quantity",
-    //       FieldType: "Integer",
-    //       Title: "Quantity",
-    //     },
-    //     {
-    //       FieldID: "Men.Cloths.Pants",
-    //       FieldType: "MultipleStringValues",
-    //       Title: "Pants Values",
-    //       OptionalValues: [
-    //         { Key: "jeans", Value: "Jeans" },
-    //         { Key: "elegant", Value: "Elegant" },
-    //       ],
-    //     },
-    //   ],
-    // };
 
-    // await this.trackerService.trackEvent({
-    //   Key: this.eventKey,
-    //   EventName: this.eventKey,
-    //   DisplayEventName: this.eventKey,
-    //   Description: "",
-    //   Alias: this.eventKey,
-    //   Filter: JSON.stringify(filter),
-    //   Fields: [],
-    // });
-    // const trackedEvents = await this.trackerService.getTrackedEvents();
-
-    // filter the event we just created and tracked, and check that the filter is correct
-    // const trackedEvent = trackedEvents.find(
-    //   (event) => event.Alias === this.eventKey
-    // );
-    //const parsedFilter = JSON.parse(trackedEvent!.Filter);
-
-    // expect(parsedFilter.Fields[0]).to.have.nested.property(
-    //   "FieldID",
-    //   "Quantity"
-    // );
-    // expect(parsedFilter.Fields[1]).to.have.nested.property(
-    //   "FieldType",
-    //   "MultipleStringValues"
-    // );
 
     return new Promise((resolve, reject) => {
       resolve(true);

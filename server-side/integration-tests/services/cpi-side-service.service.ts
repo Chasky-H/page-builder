@@ -32,18 +32,19 @@ export class PagesTestCpiSideService {
   }
 
   async getPage(key: string) {
+    debugger;
     return await this.cpiSideService.clientApi.addons.api
       .uuid(this.addonUUID)
       .get({
-        url: `/get_page_data?key=${key}`,
+        url: `/get_page_data?key='${key}'`,
       });
   }
 
-  emitEventBodyParser(event: string, pageKey: string, body?: any) {
+  emitEventBodyParser(event: string, page: Object, body?: any) {
     return body
       ? body
       : {
-          PageKey: `${pageKey}`,
+          Page: page,
           State: { PageParameters: {}, BlocksState: {} },
         };
   }
