@@ -4,3 +4,4 @@ export * from './onClientBlockLoaderData.test';
 export * from './onClientPageBlockLoad.test';
 export * from './onClientPageButtonClick.test';
 export * from './getPageData.test';
+export * from './onClientPageLoad.test';
