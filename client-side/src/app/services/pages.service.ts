@@ -254,7 +254,6 @@ export class PagesService {
     private handlePageBlockViewChangeResult(res: IPageClientEventResult, addedBlockKey: string = '') {
         // Set the state.
         this.notifyStateChange(res.State);
-
         const pageView = this._pageViewSubject.getValue();
 
         // Merge the page view blocks.

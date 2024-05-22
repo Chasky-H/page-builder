@@ -9,7 +9,8 @@
     "api.ts",
     "internal_api.ts",
     "addon_blocks.ts",
-    "event_filters.ts"
+    "event_filters.ts",
+    "tests.ts"
   ],
   "Editors": [
     "main"
