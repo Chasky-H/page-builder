@@ -36,7 +36,7 @@ export class PagesTestCpiSideService {
     return await this.cpiSideService.clientApi.addons.api
       .uuid(this.addonUUID)
       .get({
-        url: `/get_page_data?key='${key}'`,
+        url: `/pages/${key}'`,
       });
   }
 
