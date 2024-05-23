@@ -53,7 +53,8 @@ export class OnClientBlockLoadDataTest extends ABaseCpiSideTest {
       expect(emitEvent.type).to.be.equal("Finish");
     } catch(e) {
       console.log('integration_tests::errorHere');
-      console.log(e);
+      console.log((e as Error).toString());
+      console.log((e as Error).stack);
     }
 
 
