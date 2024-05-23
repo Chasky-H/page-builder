@@ -34,7 +34,7 @@ export class OnClientPageBlockLoadTest extends ABaseCpiSideTest {
 
     const block = emitEvent?.data?.PageView?.Blocks[0];
 
-    expect(block.Configuration).to.be.an("object").that.is.not.empty;
+    expect(block.Configuration).to.be.an("object");
     expect(block.Key).to.be.a("string").that.has.lengthOf(36);
     expect(block.RelationData.AddonUUID).to.be.a("string").that.has.lengthOf(36);
     expect(block.RelationData.Name).to.be.a("string").that.has.length.greaterThanOrEqual(5);

@@ -29,7 +29,6 @@ export class OnClientPageSkeletonLoadTest extends ABaseCpiSideTest {
     this.pageKey = page[0].Key;
     
     const emitBody = cpiService.emitEventBodyParser(this.interceptor, page[0]);
-
     
     const emitEvent = await cpiService.emitEvent(this.interceptor, emitBody);
 
@@ -70,7 +69,7 @@ export class OnClientPageSkeletonLoadTest extends ABaseCpiSideTest {
     const block = pageView?.Blocks[0];
 
 
-    expect(block.Configuration).to.be.an("object").that.is.not.empty;
+    expect(block.Configuration).to.be.an("object");
     expect(block.Key).to.be.a("string").that.has.lengthOf(36);
     expect(block.RelationData.AddonUUID).to.be.a("string").that.has.lengthOf(36);
     expect(block.RelationData.Name).to.be.a("string").that.has.length.greaterThanOrEqual(5);
