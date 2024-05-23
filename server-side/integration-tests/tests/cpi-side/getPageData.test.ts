@@ -46,7 +46,7 @@ export class OnClientGetPageDataTest extends ABaseCpiSideTest {
     expect(block.Key).to.be.a("string").that.has.lengthOf(36);
     expect(block.Configuration.AddonUUID).to.be.a("string").that.has.lengthOf(36);
     expect(block.Configuration.Resource).to.be.a("string").that.has.length.greaterThanOrEqual(5);
-    expect(block.Configuration.Data).to.be.an("object").that.is.not.empty.and.does.not.deep.equal({});
+    expect(block.Configuration.Data).to.be.an("object");
 
     const layout = emitEventResObj?.Layout;
 

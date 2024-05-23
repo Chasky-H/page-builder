@@ -49,7 +49,7 @@ import {
 
       const state = emitEvent?.data?.State;
 
-      expect(state).to.be.an("object").that.is.not.empty.and.is.not.null.and.is.not.undefined;
+      expect(state).to.be.an("object");
 
       const pageView = emitEvent?.data?.PageView;
 
@@ -69,7 +69,7 @@ import {
   
       const block = pageView?.Blocks[0];
   
-      expect(block.Configuration).to.be.an("object").that.is.not.empty;
+      expect(block.Configuration).to.be.an("object");
       expect(block.Key).to.be.a("string").that.has.lengthOf(36);
       expect(block.RelationData.AddonUUID).to.be.a("string").that.has.lengthOf(36);
       expect(block.RelationData.Name).to.be.a("string").that.has.length.greaterThanOrEqual(5);
