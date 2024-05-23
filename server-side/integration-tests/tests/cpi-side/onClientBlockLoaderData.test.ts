@@ -23,13 +23,13 @@ export class OnClientBlockLoadDataTest extends ABaseCpiSideTest {
   }
 
   async test(expect: Chai.ExpectStatic): Promise<any> {
-    try {
+
       const cpiService = this.pagesCPISideService();
 
       const eventData = { Name: "List", BlockType: "AddonBlock" };
   
       const emitEvent = await cpiService.emitEvent(this.interceptor, eventData);
-      console.log(emitEvent);
+
       const relation = emitEvent?.data?.relation;
   
       expect(emitEvent?.data?.addonPublicBaseURL).to.be.a('string').that.has.length.greaterThanOrEqual(10).and.includes('Public');
@@ -51,11 +51,6 @@ export class OnClientBlockLoadDataTest extends ABaseCpiSideTest {
       expect(relation?.SubType).that.is.equal("NG14");
       expect(relation?.Type).that.is.equal("NgComponent");
       expect(emitEvent.type).to.be.equal("Finish");
-    } catch(e) {
-      console.log('integration_tests::errorHere');
-      console.log((e as Error).toString());
-      console.log((e as Error).stack);
-    }
 
 
 

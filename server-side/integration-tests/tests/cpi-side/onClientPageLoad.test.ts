@@ -31,7 +31,6 @@ import {
       const emitBody = cpiService.emitEventBodyParser(this.interceptor, page[0]);
   
       const emitEvent = await cpiService.emitEvent(this.interceptor, emitBody);
-      console.log(emitEvent);
 
       expect(emitEvent?.type).to.be.equal("Finish");
 
