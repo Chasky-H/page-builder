@@ -195,7 +195,7 @@ export class SectionComponent extends BaseDestroyerComponent implements OnInit {
                     } else {
                         this.renderer.setStyle(section.nativeElement, 'grid-auto-flow', 'row');
                         this.renderer.setStyle(section.nativeElement, 'grid-template-columns', 'unset');
-                        this.renderer.setStyle(section.nativeElement, 'grid-template-rows', cssSplitString);
+                        this.renderer.setStyle(section.nativeElement, 'grid-template-rows', 'unset');//cssSplitString);
                         
                         // In runtime (or preview mode).
                         if (!this.editable) {
