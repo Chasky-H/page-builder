@@ -817,7 +817,11 @@ export class PagesService {
 
     getBlockTitle(blockKey: string): string {
         const block = this.getBlockByKeyForEditor(blockKey);
-        return block?.Configuration.Resource || blockKey;
+
+        const availableBlocksData = this._availableBlocksDataSubject.getValue();
+        const av = availableBlocksData?.find(ab => ab.RelationAddonUUID === block.Configuration.AddonUUID && ab.RelationName === block.Configuration.Resource);
+
+        return av?.RelationTitle || block?.Configuration.Resource || blockKey;
     }
 
     getBlockEditor(blockKey: string): IBlockEditor {
