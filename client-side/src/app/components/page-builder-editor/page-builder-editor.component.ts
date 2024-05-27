@@ -112,9 +112,9 @@ export class PageBuilderEditorComponent extends BaseDestroyerDirective implement
             this.pageName = pageData.Name;
             this.pageDescription = pageData.Description;
             this.parameters = pageData.Parameters || [];
-            this.onLoadFlow = pageData.OnLoadFlow || {};
-            this.onParameterChangeFlow = pageData.OnParameterChangeFlow || {};
-            this.onChangeFlow = pageData.OnChangeFlow || {};
+            this.onLoadFlow = pageData.OnLoadFlow;
+            this.onParameterChangeFlow = pageData.OnParameterChangeFlow;
+            this.onChangeFlow = pageData.OnChangeFlow;
 
             this.prepareFlowHostObjects();
         }
