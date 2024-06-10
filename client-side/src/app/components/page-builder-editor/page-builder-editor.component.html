@@ -16,10 +16,10 @@
     <label class="body-xs mat-form-title ellipsis">{{'PAGE_MANAGER.ON_PARAMETER_CHANGE_FLOW_TITLE' | translate}}</label>
     <pep-flow-picker-button [flowHostObject]="onParameterChangeFlowHostObject" styleType="regular" (flowChange)="onParameterChangeFlowChange($event)"></pep-flow-picker-button>
 </div>
-<div>
+<!-- <div>
     <label class="body-xs mat-form-title ellipsis">{{'PAGE_MANAGER.ON_CHANGE_FLOW_TITLE' | translate}}</label>
     <pep-flow-picker-button [flowHostObject]="onChangeFlowHostObject" styleType="regular" (flowChange)="onChangeFlowChange($event)"></pep-flow-picker-button>
-</div>
+</div> -->
 
 <ng-template #parametersDialogTemplate let-data>
     <pep-dialog [showClose]="true" [title]="'PAGE_MANAGER.MANAGE_PARAMETERS' | translate" [showFooter]="false" (close)="closeParametersDialog($event)">
