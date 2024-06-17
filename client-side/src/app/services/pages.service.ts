@@ -480,14 +480,18 @@ export class PagesService {
     notifyLayoutViewChanged(layoutView: IPepLayoutView) {
         if (this.layoutBuilderService.editMode) {
             const page = this._pageInEditorSubject.getValue();
-            page.Layout = layoutView.Layout;
-            this.notifyPageInEditorChange(page, false);
+
+            if (page) {
+                page.Layout = layoutView.Layout;
+                this.notifyPageInEditorChange(page, false);
+            }
         }
 
         const pageView = this._pageViewSubject.getValue();
-        pageView.Layout = layoutView.Layout;
-
-        this.notifyPageViewChange(pageView);
+        if (pageView) {
+            pageView.Layout = layoutView.Layout;
+            this.notifyPageViewChange(pageView);
+        }
     }
 
     // TODO:
