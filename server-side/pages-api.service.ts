@@ -760,10 +760,10 @@ export class PagesApiService {
                         page.Hidden = false;
                     }
                     dimxObject['Object'] = page;
-                } catch (err) {
+                } catch (err: any) {
                     // Set the error on the page.
                     dimxObject['Status'] = 'Error';
-                    dimxObject['Details'] = err;
+                    dimxObject['Details'] = err.message;
                 }
             }
 
