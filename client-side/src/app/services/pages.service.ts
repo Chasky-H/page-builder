@@ -367,7 +367,11 @@ export class PagesService {
     private raiseClientEventsForPageLoad(queryParameters: Params, eventDataExtra: any) {
         const initialPageState: IPageState = this.queryParamsService.getStateFromQueryParams(queryParameters);
         this.raiseClientEventForPageSkeletonLoad(initialPageState, eventDataExtra);
-        this.raiseClientEventForPageLoad(initialPageState, eventDataExtra);
+        
+        // This swt timeout is for solve the issue in the mobile that two events are raised in the same time (with the same key).
+        setTimeout(() => {
+            this.raiseClientEventForPageLoad(initialPageState, eventDataExtra);
+        }, 10);
     }
 
     private raiseClientEventForBlock(eventKey: string, blockKey: string, eventDataExtra: any, newBlock: boolean = false) {
