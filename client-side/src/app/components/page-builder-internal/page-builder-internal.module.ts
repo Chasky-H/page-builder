@@ -11,7 +11,7 @@ import { PepDialogModule } from '@pepperi-addons/ngx-lib/dialog';
 
 import { PepLayoutBuilderModule } from '@pepperi-addons/ngx-composite-lib/layout-builder';
 
-import { SectionBlockModule } from '../section-block/section-block.module';
+import { PageBlockModule } from '../page-block/page-block.module';
 
 import { PageBuilderInternalComponent} from './index';
 
@@ -26,7 +26,7 @@ import { PageBuilderInternalComponent} from './index';
         PepRemoteLoaderModule,
         PepSizeDetectorModule,
         PepDialogModule,
-        SectionBlockModule,
+        PageBlockModule,
         PepLayoutBuilderModule,
         TranslateModule.forChild()
     ],

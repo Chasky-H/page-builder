@@ -905,7 +905,7 @@ export class PagesService {
 
     getMergedConfigurationData(block: PageBlockView, configurationSource = false): any {
         // Copy the object data.
-        let configurationData = JSON.parse(JSON.stringify(block.Configuration));
+        let configurationData = JSON.parse(JSON.stringify(block.Configuration || {}));
         const currentScreenType = this.layoutBuilderService.getCurrentScreenType();
 
         // Get the configuration data by the current screen size (if exist then merge it up to Tablet and up to Landscape).

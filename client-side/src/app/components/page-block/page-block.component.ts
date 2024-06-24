@@ -7,11 +7,11 @@ import { IPageState, PageBlockView } from 'shared';
 import { PepLayoutBuilderService } from "@pepperi-addons/ngx-composite-lib/layout-builder";
 
 @Component({
-    selector: 'section-block',
-    templateUrl: './section-block.component.html',
-    styleUrls: ['./section-block.component.scss']
+    selector: 'page-block',
+    templateUrl: './page-block.component.html',
+    styleUrls: ['./page-block.component.scss']
 })
-export class SectionBlockComponent extends BaseDestroyerDirective implements OnInit {
+export class PageBlockComponent extends BaseDestroyerDirective implements OnInit {
     
     private _pageBlockView: PageBlockView;
     @Input()

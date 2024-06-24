@@ -4,7 +4,7 @@
 </pep-layout>
 
 <ng-template #blockTemplate let-blockKey="blockKey" let-draggableItemKey="draggableItemKey">
-    <section-block *ngIf="pageBlockViewsMap.has(blockKey)" 
+    <page-block *ngIf="pageBlockViewsMap.has(blockKey)" 
         [screenType]="screenType" [pageBlockView]="pageBlockViewsMap.get(blockKey)">
-    </section-block>
+    </page-block>
 </ng-template>

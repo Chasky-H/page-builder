@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { SectionBlockComponent } from './section-block.component'
+import { PageBlockComponent } from './page-block.component'
 // import { DragDropModule } from '@angular/cdk/drag-drop';
 // import { PepButtonModule } from '@pepperi-addons/ngx-lib/button';
 import { PepRemoteLoaderModule } from '@pepperi-addons/ngx-lib/remote-loader';
@@ -15,7 +15,7 @@ import { PepDraggableItemsModule } from '@pepperi-addons/ngx-lib/draggable-items
 
 @NgModule({
     declarations: [
-        SectionBlockComponent,
+        PageBlockComponent,
     ],
     imports: [
         CommonModule,
@@ -31,6 +31,6 @@ import { PepDraggableItemsModule } from '@pepperi-addons/ngx-lib/draggable-items
         // ModuleFederationToolsModule,
         TranslateModule.forChild()
     ],
-    exports: [SectionBlockComponent]
+    exports: [PageBlockComponent]
 })
-export class SectionBlockModule { }
+export class PageBlockModule { }
