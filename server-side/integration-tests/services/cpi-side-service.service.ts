@@ -32,7 +32,7 @@ export class PagesTestCpiSideService {
   }
 
   async getPage(key: string) {
-    debugger;
+    // debugger;
     return await this.cpiSideService.clientApi.addons.api
       .uuid(this.addonUUID)
       .get({

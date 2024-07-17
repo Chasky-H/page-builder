@@ -96,7 +96,8 @@ export class NavigationService {
 
     updateQueryParams(queryParams: any, replaceUrl: boolean) {
         // const route: ActivatedRoute = this.getCurrentRoute(this.route);
-        this.router.navigate([], { 
+        const url = location.pathname; // This for fix the routing issue (DI-28206) - navigate from page to another page cause the routing to changed back after update the QS.
+        this.router.navigate([url], { 
             // relativeTo: route,
             queryParams: queryParams, 
             queryParamsHandling: 'merge',
