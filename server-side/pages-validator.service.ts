@@ -192,7 +192,7 @@ export class PagesValidatorService {
         this.validateObjectProperty(section, 'FillHeight', sectionsPropertyBreadcrumb, true, 'boolean');
 
         // Validate Padding if exist (Optional)
-        this.validateObjectProperty(section, 'Padding', sectionsPropertyBreadcrumb, true);
+        this.validateObjectProperty(section, 'Padding', sectionsPropertyBreadcrumb, true, 'object');
 
         // Validate Split if exist (Optional)
         if (section.hasOwnProperty('Split')) {
