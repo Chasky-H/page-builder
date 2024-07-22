@@ -191,6 +191,9 @@ export class PagesValidatorService {
         // Validate FillHeight if exist (Optional)
         this.validateObjectProperty(section, 'FillHeight', sectionsPropertyBreadcrumb, true, 'boolean');
 
+        // Validate Padding if exist (Optional)
+        this.validateObjectProperty(section, 'Padding', sectionsPropertyBreadcrumb, true);
+
         // Validate Split if exist (Optional)
         if (section.hasOwnProperty('Split')) {
             if (typeof section.Split !== 'string') {
@@ -561,6 +564,7 @@ export class PagesValidatorService {
             this.addOptionalPropertyIfExist(currentSection, sectionToAdd, 'Hide');
             this.addOptionalPropertyIfExist(currentSection, sectionToAdd, 'CollapseOnTablet');
             this.addOptionalPropertyIfExist(currentSection, sectionToAdd, 'FillHeight');
+            this.addOptionalPropertyIfExist(currentSection, sectionToAdd, 'Padding');
 
             // Add Columns -> blocks specific properties.
             for (let columnIndex = 0; columnIndex < currentSection.Columns.length; columnIndex++) {
