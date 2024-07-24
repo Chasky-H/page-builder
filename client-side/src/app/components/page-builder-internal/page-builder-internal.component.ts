@@ -1,5 +1,5 @@
 import { ActivatedRoute } from '@angular/router';
-import { Component, Input, OnDestroy, OnInit } from "@angular/core";
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from "@angular/core";
 import { BehaviorSubject } from 'rxjs';
 import { BaseDestroyerDirective } from '@pepperi-addons/ngx-lib';
 import { DataViewScreenSize, PageSection } from '@pepperi-addons/papi-sdk';
@@ -29,6 +29,8 @@ export class PageBuilderInternalComponent extends BaseDestroyerDirective impleme
     get hostObject(): IPageBuilderHostObject {
         return this._hostObject;
     }
+
+    @Output() screenTypeChange: EventEmitter<DataViewScreenSize> = new EventEmitter();
 
     private _pageBlockViewsMap = new Map<string, PageBlockView>();
     get pageBlockViewsMap(): ReadonlyMap<string, PageBlockView> {
@@ -148,6 +150,9 @@ export class PageBuilderInternalComponent extends BaseDestroyerDirective impleme
     }
 
     onScreenTypeChange(screenType: DataViewScreenSize) {
-        this.screenType = screenType;
+        if (this.screenType !== screenType) {
+            this.screenType = screenType;
+            this.screenTypeChange.emit(screenType);
+        }
     }
 }

@@ -1,7 +1,7 @@
 import { Component, ElementRef, OnInit, Renderer2, ViewChild, ViewContainerRef } from "@angular/core";
 import { BaseDestroyerDirective, PepAddonService, PepLayoutService } from '@pepperi-addons/ngx-lib';
 import { TranslateService } from '@ngx-translate/core';
-import { Page } from '@pepperi-addons/papi-sdk';
+import { DataViewScreenSize, Page } from '@pepperi-addons/papi-sdk';
 import { PagesService, IBlockEditor } from '../../services/pages.service';
 // import { DIMXService } from '../../services/dimx.service';
 import { NavigationService } from '../../services/navigation.service';
@@ -174,7 +174,13 @@ export class PageManagerComponent extends BaseDestroyerDirective implements OnIn
             this.setCurrentBlockEditor(editor.id);
         }
     }
-    
+
+    onScreenTypeChange(screenType: DataViewScreenSize) {
+        if (this.currentBlockEditor?.id) {
+            this.setCurrentBlockEditor(this.currentBlockEditor.id);
+        }
+    }
+
     onBlockAdded(blockAddedEvent: IPepLayoutBlockAddedEvent) {
         this.pagesService.addBlock(blockAddedEvent);
     }
