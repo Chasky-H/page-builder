@@ -27,6 +27,6 @@
     </ng-container>
 
     <ng-container layout-content>
-        <page-builder-internal></page-builder-internal>
+        <page-builder-internal (screenTypeChange)="onScreenTypeChange($event)"></page-builder-internal>
     </ng-container>
 </pep-layout-builder>
