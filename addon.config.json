@@ -1,6 +1,6 @@
 {
   "AddonUUID": "50062e0c-9967-4ed4-9102-f2bc50602d41",
-  "AddonVersion": "3.5.6",
+  "AddonVersion": "3.5.7",
   "DebugPort": 4500,
   "WebappBaseUrl": "https://app.sandbox.pepperi.com",
   "DefaultEditor": "main",
