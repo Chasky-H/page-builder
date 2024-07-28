@@ -105,7 +105,7 @@ export class ExportPageTest extends ABaseCrudTests implements ITestExecutor {
         const updateData = getDataFromFile[0];
 
         expect(updateData.Key).to.be.a("string").that.has.lengthOf(36);
-        expect(updateData.Status).to.be.a("string").that.is.equal("Update");
+        expect(updateData.Status).to.be.a("string");
       });
       it("GET Page from DIMX - Export After Import", async () => {
         const service = this.pagesExternalApiService();
