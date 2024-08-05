@@ -48,6 +48,24 @@ export class NavigationService {
         return result;
     }
 
+    private objectToParams(queryParameters) {
+        // const objectToQueryString = queryParameters => {
+            return queryParameters
+            ? Object.entries(queryParameters).reduce(
+                (queryString, [key, val], index) => {
+                    const symbol = queryString.length === 0 ? '?' : '&';
+                    queryString +=
+                    typeof val === 'string' ? `${symbol}${key}=${val}` : '';
+                    return queryString;
+                },
+                ''
+                )
+            : '';
+        // };
+
+        // return objectToQueryString
+    }
+
     private loadDevBlocks() {
         try {
             // const devBlocksAsJSON = JSON.parse(this.route.snapshot.queryParamMap.get('devBlocks'));
@@ -95,14 +113,27 @@ export class NavigationService {
     }
 
     updateQueryParams(queryParams: any, replaceUrl: boolean) {
+        // debugger;
         // const route: ActivatedRoute = this.getCurrentRoute(this.route);
         const url = location.pathname; // This for fix the routing issue (DI-28206) - navigate from page to another page cause the routing to changed back after update the QS.
-        this.router.navigate([url], { 
-            // relativeTo: route,
-            queryParams: queryParams, 
-            queryParamsHandling: 'merge',
-            replaceUrl: replaceUrl
-        });
+        // this.router.navigate([url], { 
+        //     // relativeTo: route,
+        //     queryParams: queryParams, 
+        //     queryParamsHandling: 'merge',
+        //     replaceUrl: replaceUrl
+        // });
+
+        // Update the QS params in the URL with 'navigateTo' webapp event (for keep the back button of the browser alive).
+        const qsParams = this.objectToParams(queryParams);
+        const eventData = {
+            detail: {
+                path: url + qsParams,
+            },
+        };
+
+        const customEvent = new CustomEvent('navigateTo', eventData);
+        window.dispatchEvent(customEvent);
+        
     }
 
     // We don't need this anymore, because we are using the connectRouter from ngx-lib -> Addon service when creating new element.
