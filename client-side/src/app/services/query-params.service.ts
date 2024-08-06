@@ -26,9 +26,21 @@ export class QueryParamsService {
     getStateFromQueryParams(queryParams: IPageQueryParams): IPageState {
         // Destruct the queryParams to blocksState and pageParameters
         const { blocksState, ...pageParameters } = queryParams;
-        const initialPageState: IPageState = {
-            PageParameters: pageParameters,
-            BlocksState: JSON.parse(blocksState || "{}")
+        
+        let initialPageState: IPageState;
+        
+        // Parse the blocksState if it exists
+        try {
+            initialPageState = {
+                PageParameters: pageParameters,
+                BlocksState: JSON.parse(blocksState || "{}")
+            }
+        } catch (error) {
+            // If the blocksState is not a valid JSON, set it to an empty object
+            initialPageState = {
+                PageParameters: pageParameters,
+                BlocksState: {}
+            }
         }
 
         return initialPageState;
