@@ -29,7 +29,8 @@
       "themes": "1.1.21",
       "cpi_node": "1.1.76",
       "configurations": "0.7.34",
-      "pepperi_pack": "1.1.6"
+      "pepperi_pack": "1.1.6",
+      "translation": "0.2.13"
     },
     "CPISide": [
       "addon-cpi.ts"
