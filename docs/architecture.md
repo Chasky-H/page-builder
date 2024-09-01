@@ -1,15 +1,15 @@
-# Pages Architecture
+# Page Builder Architecture
 
 ## Overview
 
 <!-- [Provide an overview of the addon architecture] -->
-The Pages is an addon that enables the creation of custom pages in the application, these pages can be used specifically, or instead of existing pages (eg. HomePage).
+The Page Builder is an addon that enables the creation of custom pages in the application, these pages can be used specifically, or instead of existing pages (eg. HomePage).
 
-The Pages has a settings editor that allows admins to create & edit these pages by dragging & dropping PageBlocks (AKA "Block") onto pages. When a PageBlock is dragged onto a page an instance of this PageBlock is created on this Page & the Pages addon will host this PageBlock using the regular communication of addon hosting (NgComponent).
+The Page Builder has a settings editor that allows admins to create & edit these pages by dragging & dropping PageBlocks (AKA "Block") onto pages. When a PageBlock is dragged onto a page an instance of this PageBlock is created on this Page & the Page Builder addon will host this PageBlock using the regular communication of addon hosting (NgComponent).
 
 Addons can create PageBlocks that will be available in the Pages Page editor. These PageBlock will be available in Page editor when they are added to the PageBlock relation.
 
-The Pages allows the pages to be divided into sections (rows), and each section can hold multiple PageBlocks in predefined ratios.
+The Page Builder allows the pages to be divided into sections (rows), and each section can hold multiple PageBlocks in predefined ratios.
 
 The PageBlock adapts the sections per screen size, meaning that one row on a desktop can be divided (left to right) into multiple rows
 
@@ -27,8 +27,8 @@ Every PageBlock can supply an additional NgComponent that allows for the  config
 ## Infrastructure
 
 <!-- [Provide any special infrastructue the addon uses (eg. dedicated lambda etc.) and explain their usage] -->
-- The Pages addon load the page blocks remotly by webpack & module federation (the relevant data saved on the page block relation).
-- The pages addon is transfer parameters between the page blocks if they ask, each page block can be producer of a parameter (this way he can raise new value or change existing one). each page block can be consumer of parameter (this way he can get the parameter value) those declarations are made in the settings mode (when edit a page).
+- The Page Builder addon load the page blocks remotly by webpack & module federation (the relevant data saved on the page block relation).
+- The Page Builder addon is transfer parameters between the page blocks if they ask, each page block can be producer of a parameter (this way he can raise new value or change existing one). each page block can be consumer of parameter (this way he can get the parameter value) those declarations are made in the settings mode (when edit a page).
 
 ---
 

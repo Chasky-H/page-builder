@@ -1,4 +1,4 @@
-# Pages
+# Page Builder
 
 ## High Level
 
@@ -21,7 +21,7 @@ Additionally, there is an option to pass various parameters between the page and
 ## Deployment
 
 <!-- [Specify any manual or non-manual deployment specific to this addon] -->
-- After a Pull Request is merged into a release branch, a version will be published and pages tests will run. If the tests pass the version will be marked as available.
+- After a Pull Request is merged into a release branch, a version will be published and Page Builder tests will run. If the tests pass the version will be marked as available.
 
 ---
 
@@ -33,7 +33,7 @@ Additionally, there is an option to pass various parameters between the page and
 
     - Addon debugging (Edit & Create):
         - Open terminal --> change to client-side --> Start your addon with npm start.
-        Run the webapp application go to Settings --> Pages --> Application Header.
+        Run the webapp application go to Settings --> Pages --> Page Builder.
         Add ?dev=true to the browser query (URL params). add debugger on your typescript code and reload the page. notice that dev=true will work only if your addon runs on port 4400.
 
     - Page Blocks debugging:
@@ -61,7 +61,7 @@ Additionally, there is an option to pass various parameters between the page and
 |-------- |------------ |
 <!-- | [Add any dependecies on other addons]  | [Specify the reason for this dependency]  | -->
 | [themes](https://github.com/Pepperi-Addons/themes) | clients should gets theme 
-| [configurations](https://github.com/Pepperi-Addons/configurations) | pages data saved in configurations
+| [configurations](https://github.com/Pepperi-Addons/configurations) | Page Builder data saved in configurations
 | [pepperi_pack](https://github.com/Pepperi-Addons/pepperi-pack) | |
 | translation | Allow user to translate configuration text if needed |
 
