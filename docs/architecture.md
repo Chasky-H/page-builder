@@ -42,6 +42,7 @@ Working with configurations
 ## PNS Usage
 
 <!-- [Provide any PNS subscriptions or publishes done by the addon] -->
+This Addon has PNS when block is uninstalled - When this accure we runs on all the saved pages and remove the uninstalled block from the page object.      
 
 ---
 
