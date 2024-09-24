@@ -12,8 +12,6 @@ export class PageBuilderComponent extends BaseDestroyerDirective implements OnIn
     
     @Input() hostObject: any;
     
-    // editMode: boolean = false;
-
     constructor(
         private pepAddonService: PepAddonService,
         private pagesService: PagesService,

@@ -4,7 +4,6 @@ import { DataViewScreenSize } from '@pepperi-addons/papi-sdk';
 import { PepRemoteLoaderOptions } from '@pepperi-addons/ngx-lib/remote-loader';
 import { BaseDestroyerDirective } from '@pepperi-addons/ngx-lib';
 import { IPageState, PageBlockView } from 'shared';
-import { PepLayoutBuilderService } from "@pepperi-addons/ngx-composite-lib/layout-builder";
 
 @Component({
     selector: 'page-block',
@@ -54,8 +53,7 @@ export class PageBlockComponent extends BaseDestroyerDirective implements OnInit
     onBlockHostEventsCallback: (event: CustomEvent) => void;
 
     constructor(
-        private pagesService: PagesService,
-        private layoutBuilderService: PepLayoutBuilderService
+        private pagesService: PagesService
     ) {
         super();
 
@@ -138,13 +136,13 @@ export class PageBlockComponent extends BaseDestroyerDirective implements OnInit
         switch(event.action) {
             case 'state-change':
                 // In runtime (or preview mode).
-                if (!this.layoutBuilderService.editableState) {
+                if (!this.pagesService.editableState) {
                     this.pagesService.onBlockStateChange(this.pageBlockView.Key, event);
                 }
                 break;
             case 'button-click':
                 // In runtime (or preview mode).
-                if (!this.layoutBuilderService.editableState) {
+                if (!this.pagesService.editableState) {
                     this.pagesService.onBlockButtonClick(this.pageBlockView.Key, event);
                 }
                 break;

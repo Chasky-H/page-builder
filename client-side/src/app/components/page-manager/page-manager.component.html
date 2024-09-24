@@ -1,6 +1,7 @@
 <pep-layout-builder 
     [availableBlocksForDrag]="availableBlocksForDrag" [layoutEditorTitle]="layoutEditorTitle" 
-    [blocksLayoutConfig]="blocksLayoutConfig"
+    [blocksLayoutConfig]="blocksLayoutConfig" [lockScreen]="lockScreen"
+    (editableStateChange)="onEditableStateChange($event)"
     (backClick)="onBackClick()" (editorChange)="onEditorChanged($event)" 
     (blockAdded)="onBlockAdded($event)" (blocksRemoved)="onBlocksRemoved($event)">
 
@@ -9,7 +10,7 @@
     </ng-container>
 
     <ng-container block-editor-content>
-        <pep-remote-loader-element *ngIf="layoutBuilderService.editableState && currentBlockEditor?.remoteModuleOptions"
+        <pep-remote-loader-element *ngIf="pagesService.editableState && currentBlockEditor?.remoteModuleOptions"
             [options]="currentBlockEditor?.remoteModuleOptions" 
             [props]="{ hostObject: currentBlockEditor?.hostObject }"
             [events]="{ hostEvents: onBlockEditorHostEventsCallback }">
@@ -27,6 +28,6 @@
     </ng-container>
 
     <ng-container layout-content>
-        <page-builder-internal (screenTypeChange)="onScreenTypeChange($event)"></page-builder-internal>
+        <page-builder-internal [editorMode]="true" (screenTypeChange)="onScreenTypeChange($event)"></page-builder-internal>
     </ng-container>
 </pep-layout-builder>

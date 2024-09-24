@@ -15,7 +15,7 @@ import { PepSnackBarData, PepSnackBarService } from "@pepperi-addons/ngx-lib/sna
 import { IPageState } from 'shared';
 import { QueryParamsService } from "./query-params.service";
 import { IParamemeter } from "@pepperi-addons/ngx-composite-lib/manage-parameters";
-import { PepLayoutBuilderService, IPepLayoutBlockAddedEvent, IPepLayoutView } from "@pepperi-addons/ngx-composite-lib/layout-builder";
+import { IPepLayoutBlockAddedEvent, IPepLayoutView } from "@pepperi-addons/ngx-composite-lib/layout-builder";
 
 import * as _ from 'lodash';
 
@@ -128,6 +128,18 @@ export class PagesService {
         return this._pageViewSubject.asObservable().pipe(filter(page => !!page));
     }
 
+    // This subject is for lock screen.
+    private _lockScreenSubject: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+    get lockScreenChange$(): Observable<boolean> {
+        return this._lockScreenSubject.asObservable();
+    }
+
+    // This subject is for skeleton.
+    private _showSkeletonSubject: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+    get showSkeletonChange$(): Observable<boolean> {
+        return this._showSkeletonSubject.asObservable();
+    }
+
     private _pageState: BehaviorSubject<IPageState> = new BehaviorSubject<IPageState>(null);
     get pageStateChange$(): Observable<IPageState> {
         return this._pageState.asObservable().pipe(distinctUntilChanged());
@@ -139,6 +151,31 @@ export class PagesService {
         return this._blockLoadEventSubject.asObservable().pipe(debounceTime(250));
     }
     
+    private _editorMode: boolean = false;
+    get editorMode(): boolean {
+        return this._editorMode;
+    }
+
+    get pageKey(): string {
+        return this._pageViewSubject.getValue()?.Key || '';
+    }
+
+    private _editableState: boolean = false;
+    get editableState(): boolean {
+        return this._editableState;
+    }
+    set editableState(value: boolean) {
+        this._editableState = value;
+    }
+
+    private _currentScreenType: DataViewScreenSize = 'Landscape'
+    get currentScreenType(): DataViewScreenSize {
+        return this._currentScreenType;
+    }
+    set currentScreenType(value: DataViewScreenSize) {
+        this._currentScreenType = value;
+    }
+
     constructor(
         private translate: TranslateService,
         // dialogService: PepDialogService,
@@ -148,7 +185,6 @@ export class PagesService {
         private httpService: PepHttpService,
         private navigationService: NavigationService,
         private queryParamsService: QueryParamsService,
-        private layoutBuilderService: PepLayoutBuilderService
     ) {
         // super(translate, dialogService);
 
@@ -161,7 +197,7 @@ export class PagesService {
             // Load the blocks remote loader options.
             this.loadBlocksRemoteLoaderOptionsMap(availableBlocksData);
 
-            if (this.layoutBuilderService.editMode) {
+            if (this.editorMode) {
                 // Load the blocks editors remote loader options.
                 this.loadBlocksEditorsRemoteLoaderOptionsMap(availableBlocksData);
             }
@@ -177,12 +213,17 @@ export class PagesService {
 
         // Create subject for load the events for block load only once when there is changes in the blocks editor.
         this.blockLoadEventDebouncedSubject$.subscribe((eventValue: { blockKey: string }) => {
-            if (this.layoutBuilderService.editMode) {
+            if (this.editorMode) {
                 this.raiseClientEventForBlock(CLIENT_ACTION_ON_CLIENT_PAGE_BLOCK_LOAD, eventValue.blockKey, null);
             }
         });
     }
     
+    private initEditorMode(editorMode: boolean) {
+        this._editorMode = editorMode;
+        this._editableState = editorMode;
+    }
+
     private loadBlocks(pageView: IPageView) {
         if (pageView) {
             // Some logic to load the blocks by priority (first none or Produce only, second Consume & Produce, third Consume only).
@@ -302,7 +343,7 @@ export class PagesService {
     
     private raiseClientEventForPageSkeletonLoad(initialPageState: IPageState, eventDataExtra: any) {
         // Show sceleton.
-        this.layoutBuilderService.showSkeleton(true);
+        this.notifyShowSkeletonChange(true);
 
         const event = {
             eventKey: CLIENT_ACTION_ON_CLIENT_PAGE_SKELETON_LOAD,
@@ -340,7 +381,7 @@ export class PagesService {
             },
             completion: (res: IPageClientEventResult) => {
                 // Hide skeleton and show blocks instead.
-                this.layoutBuilderService.showSkeleton(false);
+                this.notifyShowSkeletonChange(false);
 
                 if (res && res.PageView && res.AvailableBlocksData) {
                     // Load the available blocks.
@@ -382,7 +423,7 @@ export class PagesService {
         };
 
         // For editor (also in preview mode take the page object, Else take the page key).
-        if (this.layoutBuilderService.editMode) {
+        if (this.editorMode) {
             eventData['Page'] = this._pageInEditorSubject.getValue();
         } else {
             eventData['PageKey'] = this._pageViewSubject.getValue().Key;
@@ -397,9 +438,6 @@ export class PagesService {
                     this.handlePageBlockViewChangeResult(res, newBlock ? blockKey : '');
                 } else {
                     // TODO: Show error?
-
-                    // TODO: Unlock?
-                    // this.layoutBuilderService.lockScreen(false);
                 }
             }
         });
@@ -455,6 +493,14 @@ export class PagesService {
         // this.notifyBlockProgressMapChange();
     }
     
+    private notifyLockScreenChange(lock: boolean) {
+        this._lockScreenSubject.next(lock);
+    }
+    
+    private notifyShowSkeletonChange(showSkeleton: boolean) {
+        this._showSkeletonSubject.next(showSkeleton);
+    }
+    
     private notifyStateChange(state: IPageState) {
         this._pageState.next(state);
     }
@@ -482,7 +528,7 @@ export class PagesService {
     }
     
     notifyLayoutViewChanged(layoutView: IPepLayoutView) {
-        if (this.layoutBuilderService.editMode) {
+        if (this.editorMode) {
             const page = this._pageInEditorSubject.getValue();
 
             if (page) {
@@ -527,7 +573,7 @@ export class PagesService {
         // Notify that the block is changed (to raise the CPI event).
         if (newBlock) {
             // Raise the event for the new block.
-            if (this.layoutBuilderService.editMode) {
+            if (this.editorMode) {
                 this.raiseClientEventForBlock(CLIENT_ACTION_ON_CLIENT_PAGE_BLOCK_LOAD, block.Key, null, true);
             }
         } else {
@@ -629,14 +675,14 @@ export class PagesService {
         this.setObjectPropertyValue(block.Configuration.Data, propertyNamePath, fieldValue);
     }
 
-    private updateConfigurationPerScreenSizeFieldValue(block: PageBlock, propertyNamePath: string, fieldValue: any, currentScreenType: DataViewScreenSize) {
+    private updateConfigurationPerScreenSizeFieldValue(block: PageBlock, propertyNamePath: string, fieldValue: any) {
         // Update the block configuration per screen size according the current screen sizes and the saved values (deep set).
         if (block.ConfigurationPerScreenSize === undefined) {
             block.ConfigurationPerScreenSize = {};
         }
 
         let objectToUpdate;
-        if (currentScreenType === 'Tablet') {
+        if (this.currentScreenType === 'Tablet') {
             if (block.ConfigurationPerScreenSize.Tablet === undefined) {
                 block.ConfigurationPerScreenSize.Tablet = {};
             }
@@ -906,12 +952,11 @@ export class PagesService {
     getMergedConfigurationData(block: PageBlockView, configurationSource = false): any {
         // Copy the object data.
         let configurationData = JSON.parse(JSON.stringify(block.Configuration || {}));
-        const currentScreenType = this.layoutBuilderService.getCurrentScreenType();
 
         // Get the configuration data by the current screen size (if exist then merge it up to Tablet and up to Landscape).
-        if (currentScreenType !== 'Landscape' && block.ConfigurationPerScreenSize) {
+        if (this.currentScreenType !== 'Landscape' && block.ConfigurationPerScreenSize) {
             if (configurationSource) {
-                if (currentScreenType === 'Phablet') {
+                if (this.currentScreenType === 'Phablet') {
                     configurationData = this.utilitiesService.mergeDeep(configurationData, block.ConfigurationPerScreenSize.Tablet);
                 }
             } else {
@@ -919,7 +964,7 @@ export class PagesService {
                 configurationData = this.utilitiesService.mergeDeep(configurationData, block.ConfigurationPerScreenSize.Tablet);
 
                 // If currentScreenType === 'Phablet' merge from mobile
-                if (currentScreenType === 'Phablet') {
+                if (this.currentScreenType === 'Phablet') {
                     configurationData = this.utilitiesService.mergeDeep(configurationData, block.ConfigurationPerScreenSize.Mobile);
                 }
             }
@@ -945,7 +990,7 @@ export class PagesService {
 
     addBlock(blockAddedEvent: IPepLayoutBlockAddedEvent) {
         // Lock the screen.
-        this.layoutBuilderService.lockScreen(true);
+        this.notifyLockScreenChange(true);
 
         // Create new block from the availableBlockData (previousContainer.data.availableBlockData is AvailableBlockData object).
         const availableBlockData: IAvailableBlockData = blockAddedEvent.DraggableItem.data.availableBlockData;
@@ -987,12 +1032,10 @@ export class PagesService {
             //     // setTimeout 0 for navigate on the UI thread.
             //     setTimeout(() => {
             //         this.navigateToEditor('block', bpToUpdate.block.Key);
-
-            //         // unlock the screen.
-            //         this.layoutBuilderService.setLockScreen(false);
             //     }, 0);
             // }
-            this.layoutBuilderService.lockScreen(false);
+            this.notifyLockScreenChange(false);
+
             bpToUpdate.loaded = true;
 
             this.notifyBlockProgressMapChange();
@@ -1028,10 +1071,8 @@ export class PagesService {
 
         try {
             if (block) {
-                const currentScreenType = this.layoutBuilderService.getCurrentScreenType();
-
                 // If it's Landscape mode then set the field to the regular (Configuration -> Data -> field hierarchy).
-                if (currentScreenType === 'Landscape') {
+                if (this.currentScreenType === 'Landscape') {
                     // Update confuguration data only if the value is not undefined (cannot reset the root).
                     if (fieldValue !== undefined) {
                         this.updateConfigurationDataFieldValue(block, fieldKey, fieldValue);
@@ -1050,7 +1091,7 @@ export class PagesService {
 
                     // Update
                     if (canConfigurePerScreenSize) {
-                        this.updateConfigurationPerScreenSizeFieldValue(block, fieldKey, fieldValue, currentScreenType);
+                        this.updateConfigurationPerScreenSizeFieldValue(block, fieldKey, fieldValue);
                     } else {
                         // Update confuguration data.
                         this.updateConfigurationDataFieldValue(block, fieldKey, fieldValue);
@@ -1142,12 +1183,14 @@ export class PagesService {
         return this.httpService.getHttpCall(`${baseUrl}/create_page?templateFileName=${templateFileName}&pageNum=${totalPages+1}`);
     }
     
-    loadPageBuilder(addonUUID: string, pageKey: string, queryParameters: Params): void {
+    loadPageBuilder(addonUUID: string, editorMode: boolean, pageKey: string, queryParameters: Params): void {
         //  If is't not edit mode get the page from the CPI side.
         const baseUrl = this.getBaseUrl(addonUUID);
 
+        this.initEditorMode(editorMode);
+
         // Raise the PageLoad event to get all neccessary data.
-        if (!this.layoutBuilderService.editMode) {
+        if (!editorMode) {
             this.raiseClientEventsForPageLoad(queryParameters, { PageKey: pageKey });
         } else { 
             // If is't edit mode get the data of the page from the Server side and then raise the PageLoad event to get all the neccessary data.

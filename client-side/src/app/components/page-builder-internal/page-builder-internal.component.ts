@@ -30,6 +30,8 @@ export class PageBuilderInternalComponent extends BaseDestroyerDirective impleme
         return this._hostObject;
     }
 
+    @Input() editorMode: boolean = false;
+
     @Output() screenTypeChange: EventEmitter<DataViewScreenSize> = new EventEmitter();
 
     private _pageBlockViewsMap = new Map<string, PageBlockView>();
@@ -56,7 +58,7 @@ export class PageBuilderInternalComponent extends BaseDestroyerDirective impleme
     private isBlockShouldBeHidden(blockKey: string): boolean {
         let res = false;
 
-        if (!this.layoutBuilderService.editMode) {
+        if (!this.editorMode) {
             let blockFound = false;
             const sections = this._sectionsSubject.getValue();
 
@@ -97,16 +99,21 @@ export class PageBuilderInternalComponent extends BaseDestroyerDirective impleme
             // const queryParams = this.hostObject?.pageParams || this.route?.snapshot?.queryParams;
             const urlParams = this.navigationService.getQueryParamsAsObject();
             const queryParams = this.hostObject?.pageParams || urlParams;
-            this.pagesService.loadPageBuilder(addonUUID, pageKey, queryParams);
+            this.pagesService.loadPageBuilder(addonUUID, this.editorMode, pageKey, queryParams);
 
             this.pagesService.pageViewDataChange$.pipe(this.getDestroyer()).subscribe((page: IPageView) => {
                 if (JSON.stringify(this.layoutView?.Layout) !== JSON.stringify(page.Layout)) {
                     this.layoutView = {
+                        // Key: pageKey,
                         Layout: page.Layout as IPepLayout
                     };
 
                     this._sectionsSubject.next(page.Layout?.Sections || []);
                 }
+            });
+
+            this.pagesService.showSkeletonChange$.pipe(this.getDestroyer()).subscribe((showSkeleton: boolean) => {
+                this.showSkeleton = showSkeleton;
             });
 
             this.pagesService.pageBlockProgressMapChange$.pipe(this.getDestroyer()).subscribe((blocksProgress: ReadonlyMap<string, IBlockProgress>) => {
@@ -151,6 +158,7 @@ export class PageBuilderInternalComponent extends BaseDestroyerDirective impleme
 
     onScreenTypeChange(screenType: DataViewScreenSize) {
         if (this.screenType !== screenType) {
+            this.pagesService.currentScreenType = screenType;
             this.screenType = screenType;
             this.screenTypeChange.emit(screenType);
         }
