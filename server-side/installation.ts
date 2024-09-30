@@ -33,8 +33,9 @@ export async function install(client: Client, request: Request): Promise<any> {
 
 export async function uninstall(client: Client, request: Request): Promise<any> {
     try {
-        const pageService = new PagesApiService(client);
-        await pageService.unsubscribeUninstallAddons(pnsKeyForPages, pnsFunctionPathForPages);
+        // Remove this cause a bug in the system.
+        // const pageService = new PagesApiService(client);
+        // await pageService.unsubscribeUninstallAddons(pnsKeyForPages, pnsFunctionPathForPages);
         // await pageService.unsubscribeUninstallAddons(pnsKeyForDraftPages, pnsFunctionPathForDraftPages);
     } catch (err) {
         throw new Error(`Failed to unsubscribe from PNS. error - ${err}`);
